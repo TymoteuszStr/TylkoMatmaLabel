@@ -36,14 +36,28 @@
 
           <!-- Password Field -->
           <UFormGroup label="Hasło" name="password" required>
-            <UInput
-              v-model="form.password"
-              type="password"
-              placeholder="••••••••"
-              size="lg"
-              :disabled="loading"
-              autocomplete="current-password"
-            />
+            <div class="relative">
+              <UInput
+                v-model="form.password"
+                :type="showPassword ? 'text' : 'password'"
+                placeholder="••••••••"
+                size="lg"
+                :disabled="loading"
+                autocomplete="current-password"
+                :ui="{ base: 'pr-12' }"
+              />
+              <button
+                type="button"
+                @click="showPassword = !showPassword"
+                class="absolute top-1/2 -translate-y-1/2 right-3 cursor-pointer z-10"
+                tabindex="-1"
+              >
+                <UIcon
+                  :name="showPassword ? 'i-heroicons-eye-slash' : 'i-heroicons-eye'"
+                  class="h-5 w-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                />
+              </button>
+            </div>
           </UFormGroup>
 
           <!-- Error Message -->
@@ -97,6 +111,7 @@ const form = reactive({
 
 const loading = ref(false)
 const errorMessage = ref('')
+const showPassword = ref(false)
 
 async function handleLogin() {
   loading.value = true

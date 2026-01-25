@@ -1,9 +1,14 @@
 <template>
-  <div class="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 dark:bg-gray-950 sm:px-6 lg:px-8">
+  <div
+    class="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 dark:bg-gray-950 sm:px-6 lg:px-8"
+  >
     <div class="w-full max-w-md">
       <div class="text-center">
         <NuxtLink to="/" class="inline-flex items-center justify-center gap-2">
-          <UIcon name="i-heroicons-academic-cap" class="text-4xl text-primary-600" />
+          <UIcon
+            name="i-heroicons-academic-cap"
+            class="text-4xl text-primary-600"
+          />
           <h1 class="text-3xl font-bold">TylkoMatma</h1>
         </NuxtLink>
         <h2 class="mt-6 text-2xl font-bold text-gray-900 dark:text-white">
@@ -23,7 +28,7 @@
       <UCard class="mt-8">
         <form @submit.prevent="handleRegister" class="space-y-6">
           <!-- Display Name Field -->
-          <UFormGroup label="Imię i nazwisko" name="displayName">
+          <UFormGroup label="Imię i nazwisko" name="displayName" required>
             <UInput
               v-model="form.displayName"
               placeholder="Jan Kowalski"
@@ -46,14 +51,28 @@
 
           <!-- Password Field -->
           <UFormGroup label="Hasło" name="password" required>
-            <UInput
-              v-model="form.password"
-              type="password"
-              placeholder="••••••••"
-              size="lg"
-              :disabled="loading"
-              autocomplete="new-password"
-            />
+            <div class="relative">
+              <UInput
+                v-model="form.password"
+                :type="showPassword ? 'text' : 'password'"
+                placeholder="••••••••"
+                size="lg"
+                :disabled="loading"
+                autocomplete="new-password"
+                :ui="{ base: 'pr-12' }"
+              />
+              <button
+                type="button"
+                @click="showPassword = !showPassword"
+                class="absolute top-1/2 -translate-y-1/2 right-3 cursor-pointer z-10"
+                tabindex="-1"
+              >
+                <UIcon
+                  :name="showPassword ? 'i-heroicons-eye-slash' : 'i-heroicons-eye'"
+                  class="h-5 w-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                />
+              </button>
+            </div>
             <template #hint>
               <span class="text-xs text-gray-500 dark:text-gray-400">
                 Minimum 8 znaków
@@ -63,14 +82,28 @@
 
           <!-- Confirm Password Field -->
           <UFormGroup label="Potwierdź hasło" name="confirmPassword" required>
-            <UInput
-              v-model="form.confirmPassword"
-              type="password"
-              placeholder="••••••••"
-              size="lg"
-              :disabled="loading"
-              autocomplete="new-password"
-            />
+            <div class="relative">
+              <UInput
+                v-model="form.confirmPassword"
+                :type="showConfirmPassword ? 'text' : 'password'"
+                placeholder="••••••••"
+                size="lg"
+                :disabled="loading"
+                autocomplete="new-password"
+                :ui="{ base: 'pr-12' }"
+              />
+              <button
+                type="button"
+                @click="showConfirmPassword = !showConfirmPassword"
+                class="absolute top-1/2 -translate-y-1/2 right-3 cursor-pointer z-10"
+                tabindex="-1"
+              >
+                <UIcon
+                  :name="showConfirmPassword ? 'i-heroicons-eye-slash' : 'i-heroicons-eye'"
+                  class="h-5 w-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                />
+              </button>
+            </div>
           </UFormGroup>
 
           <!-- Error Message -->
@@ -120,61 +153,68 @@
 <script setup lang="ts">
 definePageMeta({
   layout: false,
-})
+});
 
-const router = useRouter()
-const { signUp } = useAuth()
+const router = useRouter();
+const { signUp } = useAuth();
 
 const form = reactive({
-  displayName: '',
-  email: '',
-  password: '',
-  confirmPassword: '',
-})
+  displayName: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+});
 
-const loading = ref(false)
-const errorMessage = ref('')
-const successMessage = ref('')
+const loading = ref(false);
+const errorMessage = ref("");
+const successMessage = ref("");
+const showPassword = ref(false);
+const showConfirmPassword = ref(false);
 
 const canSubmit = computed(() => {
   return (
+    form.displayName &&
     form.email &&
     form.password &&
     form.confirmPassword &&
     form.password.length >= 8 &&
     form.password === form.confirmPassword
-  )
-})
+  );
+});
 
 async function handleRegister() {
-  if (!canSubmit.value) return
+  if (!canSubmit.value) return;
+
+  if (!form.displayName) {
+    errorMessage.value = "Imię i nazwisko jest wymagane";
+    return;
+  }
 
   if (form.password !== form.confirmPassword) {
-    errorMessage.value = 'Hasła nie są zgodne'
-    return
+    errorMessage.value = "Hasła nie są zgodne";
+    return;
   }
 
   if (form.password.length < 8) {
-    errorMessage.value = 'Hasło musi mieć co najmniej 8 znaków'
-    return
+    errorMessage.value = "Hasło musi mieć co najmniej 8 znaków";
+    return;
   }
 
-  loading.value = true
-  errorMessage.value = ''
-  successMessage.value = ''
+  loading.value = true;
+  errorMessage.value = "";
+  successMessage.value = "";
 
-  const result = await signUp(form.email, form.password, form.displayName)
+  const result = await signUp(form.email, form.password, form.displayName);
 
-  loading.value = false
+  loading.value = false;
 
   if (result.success) {
-    successMessage.value = 'Konto utworzone! Przekierowywanie...'
+    successMessage.value = "Konto utworzone! Przekierowywanie...";
     setTimeout(() => {
-      router.push('/')
-    }, 1500)
+      router.push("/");
+    }, 1500);
   } else {
-    errorMessage.value = result.error || 'Błąd rejestracji'
+    errorMessage.value = result.error || "Błąd rejestracji";
   }
 }
 </script>
-
