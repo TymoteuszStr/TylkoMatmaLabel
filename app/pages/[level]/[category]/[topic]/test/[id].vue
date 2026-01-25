@@ -249,7 +249,7 @@ function handleSubmitTest() {
   
   // Save test attempt if user is logged in
   if (user.value) {
-    testStore.saveTestAttempt(testId, user.value.id)
+    testStore.saveTestAttempt(testId, user.value.sub)
   }
 }
 

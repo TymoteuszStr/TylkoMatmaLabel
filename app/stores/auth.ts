@@ -164,7 +164,7 @@ export const useAuthStore = defineStore("auth", () => {
       const { error } = await supabase
         .from("user_profiles")
         .update(updates)
-        .eq("id", user.value.id);
+        .eq("id", user.value.sub);
 
       if (error) throw error;
 

@@ -15,7 +15,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
     const { data: profile, error } = await supabase
       .from('user_profiles')
       .select('role')
-      .eq('id', user.value.id)
+      .eq('id', user.value.sub)
       .single()
 
     if (error || !profile || profile.role !== 'admin') {

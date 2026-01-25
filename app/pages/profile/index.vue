@@ -496,14 +496,14 @@ const fetchStats = async () => {
     const { count: topicsCount } = await supabase
       .from('user_progress')
       .select('*', { count: 'exact', head: true })
-      .eq('user_id', user.value.id)
+      .eq('user_id', user.value.sub)
       .eq('status', 'completed')
 
     // Fetch passed tests count
     const { count: testsCount } = await supabase
       .from('test_attempts')
       .select('*', { count: 'exact', head: true })
-      .eq('user_id', user.value.id)
+      .eq('user_id', user.value.sub)
       .gte('score', 60) // Assuming 60% is passing score
 
     stats.value.completedTopics = topicsCount || 0
@@ -513,7 +513,7 @@ const fetchStats = async () => {
     const { data: recentProgress } = await supabase
       .from('user_progress')
       .select('last_accessed_at')
-      .eq('user_id', user.value.id)
+      .eq('user_id', user.value.sub)
       .order('last_accessed_at', { ascending: false })
       .limit(1)
 
@@ -682,7 +682,7 @@ const handleDeleteAccount = async () => {
       const { error: profileError } = await supabase
         .from('user_profiles')
         .delete()
-        .eq('id', user.value.id)
+        .eq('id', user.value.sub)
 
       if (profileError) throw profileError
 
