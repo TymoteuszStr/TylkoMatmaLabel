@@ -134,7 +134,7 @@ const userMenuItems = computed(() => [
     {
       label: 'Mój profil',
       icon: 'i-heroicons-user',
-      to: '/profil',
+      to: '/profile',
     },
     {
       label: 'Moje wyniki',
