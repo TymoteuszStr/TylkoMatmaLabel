@@ -31,21 +31,23 @@
                 </UButton>
               </ClientOnly>
 
-              <UDropdown :items="userMenuItems">
-                <UButton
-                  variant="ghost"
-                  color="gray"
-                  size="sm"
-                  trailing-icon="i-heroicons-chevron-down"
-                >
-                  <UAvatar
-                    :src="profile?.avatar_url"
-                    :alt="profile?.display_name || 'Admin'"
-                    size="xs"
-                  />
-                  <span class="hidden sm:inline">{{ profile?.display_name }}</span>
-                </UButton>
-              </UDropdown>
+              <ClientOnly>
+                <UDropdown :items="userMenuItems">
+                  <UButton
+                    variant="ghost"
+                    color="gray"
+                    size="sm"
+                    trailing-icon="i-heroicons-chevron-down"
+                  >
+                    <UAvatar
+                      :src="profile?.avatar_url"
+                      :alt="profile?.display_name || 'Admin'"
+                      size="xs"
+                    />
+                    <span class="hidden sm:inline">{{ profile?.display_name }}</span>
+                  </UButton>
+                </UDropdown>
+              </ClientOnly>
             </div>
           </div>
         </div>

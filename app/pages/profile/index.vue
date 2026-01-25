@@ -12,187 +12,193 @@
       </div>
 
       <!-- Profile Overview Card -->
-      <UCard class="mb-6">
-        <template #header>
-          <div class="flex items-center justify-between">
-            <h2 class="text-xl font-semibold">Informacje o koncie</h2>
-            <UBadge
-              :color="isAdmin ? 'red' : 'blue'"
-              variant="subtle"
-              size="lg"
-            >
-              {{ isAdmin ? 'Administrator' : 'Uczeń' }}
-            </UBadge>
-          </div>
-        </template>
-
-        <div class="flex flex-col items-center gap-6 sm:flex-row sm:items-start">
-          <!-- Avatar -->
-          <div class="flex flex-col items-center gap-3">
-            <UAvatar
-              :src="profile?.avatar_url || undefined"
-              :alt="profile?.display_name || 'User'"
-              size="3xl"
-            />
-            <UButton
-              size="sm"
-              color="gray"
-              variant="outline"
-              @click="isEditingAvatar = true"
-            >
-              Zmień zdjęcie
-            </UButton>
-          </div>
-
-          <!-- User Info -->
-          <div class="flex-1 space-y-4">
-            <div>
-              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Nazwa wyświetlana
-              </label>
-              <p class="mt-1 text-lg text-gray-900 dark:text-white">
-                {{ profile?.display_name || 'Brak nazwy' }}
-              </p>
-            </div>
-            
-            <div>
-              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Email
-              </label>
-              <p class="mt-1 text-lg text-gray-900 dark:text-white">
-                {{ user?.email }}
-              </p>
-            </div>
-
-            <div>
-              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Data dołączenia
-              </label>
-              <p class="mt-1 text-gray-600 dark:text-gray-400">
-                {{ formatDate(profile?.created_at) }}
-              </p>
-            </div>
-
-            <div class="flex gap-2">
-              <UButton
-                color="primary"
-                @click="isEditingProfile = true"
+      <ClientOnly>
+        <UCard class="mb-6">
+          <template #header>
+            <div class="flex items-center justify-between">
+              <h2 class="text-xl font-semibold">Informacje o koncie</h2>
+              <UBadge
+                :color="isAdmin ? 'red' : 'blue'"
+                variant="subtle"
+                size="lg"
               >
-                Edytuj profil
-              </UButton>
+                {{ isAdmin ? 'Administrator' : 'Uczeń' }}
+              </UBadge>
+            </div>
+          </template>
+
+          <div class="flex flex-col items-center gap-6 sm:flex-row sm:items-start">
+            <!-- Avatar -->
+            <div class="flex flex-col items-center gap-3">
+              <UAvatar
+                :src="profile?.avatar_url || undefined"
+                :alt="profile?.display_name || 'User'"
+                size="3xl"
+              />
               <UButton
+                size="sm"
                 color="gray"
                 variant="outline"
-                @click="isChangingPassword = true"
+                @click="isEditingAvatar = true"
               >
-                Zmień hasło
+                Zmień zdjęcie
+              </UButton>
+            </div>
+
+            <!-- User Info -->
+            <div class="flex-1 space-y-4">
+              <div>
+                <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Nazwa wyświetlana
+                </label>
+                <p class="mt-1 text-lg text-gray-900 dark:text-white">
+                  {{ profile?.display_name || 'Brak nazwy' }}
+                </p>
+              </div>
+              
+              <div>
+                <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Email
+                </label>
+                <p class="mt-1 text-lg text-gray-900 dark:text-white">
+                  {{ user?.email }}
+                </p>
+              </div>
+
+              <div>
+                <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Data dołączenia
+                </label>
+                <p class="mt-1 text-gray-600 dark:text-gray-400">
+                  {{ formatDate(profile?.created_at) }}
+                </p>
+              </div>
+
+              <div class="flex gap-2">
+                <UButton
+                  color="primary"
+                  @click="isEditingProfile = true"
+                >
+                  Edytuj profil
+                </UButton>
+                <UButton
+                  color="gray"
+                  variant="outline"
+                  @click="isChangingPassword = true"
+                >
+                  Zmień hasło
+                </UButton>
+              </div>
+            </div>
+          </div>
+        </UCard>
+      </ClientOnly>
+
+      <!-- Statistics Cards -->
+      <ClientOnly>
+        <div class="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <UCard>
+            <div class="flex items-center gap-4">
+              <div class="rounded-lg bg-primary-100 p-3 dark:bg-primary-900">
+                <UIcon
+                  name="i-heroicons-academic-cap"
+                  class="text-2xl text-primary-600 dark:text-primary-400"
+                />
+              </div>
+              <div>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  Ukończone tematy
+                </p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                  {{ stats.completedTopics }}
+                </p>
+              </div>
+            </div>
+          </UCard>
+
+          <UCard>
+            <div class="flex items-center gap-4">
+              <div class="rounded-lg bg-green-100 p-3 dark:bg-green-900">
+                <UIcon
+                  name="i-heroicons-check-badge"
+                  class="text-2xl text-green-600 dark:text-green-400"
+                />
+              </div>
+              <div>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  Zdane testy
+                </p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                  {{ stats.passedTests }}
+                </p>
+              </div>
+            </div>
+          </UCard>
+
+          <UCard>
+            <div class="flex items-center gap-4">
+              <div class="rounded-lg bg-orange-100 p-3 dark:bg-orange-900">
+                <UIcon
+                  name="i-heroicons-fire"
+                  class="text-2xl text-orange-600 dark:text-orange-400"
+                />
+              </div>
+              <div>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  Dni z rzędu
+                </p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                  {{ stats.streak }}
+                </p>
+              </div>
+            </div>
+          </UCard>
+        </div>
+      </ClientOnly>
+
+      <!-- Account Actions -->
+      <ClientOnly>
+        <UCard>
+          <template #header>
+            <h2 class="text-xl font-semibold">Ustawienia konta</h2>
+          </template>
+
+          <div class="space-y-4">
+            <div class="flex items-center justify-between border-b border-gray-200 pb-4 dark:border-gray-700">
+              <div>
+                <h3 class="font-medium text-gray-900 dark:text-white">
+                  Powiadomienia email
+                </h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  Otrzymuj powiadomienia o nowych materiałach
+                </p>
+              </div>
+              <UToggle
+                v-model="emailNotifications"
+                @update:model-value="updateNotificationSettings"
+              />
+            </div>
+
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="font-medium text-gray-900 dark:text-white">
+                  Usuń konto
+                </h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  Trwale usuń swoje konto i wszystkie dane
+                </p>
+              </div>
+              <UButton
+                color="red"
+                variant="outline"
+                @click="isConfirmingDelete = true"
+              >
+                Usuń konto
               </UButton>
             </div>
           </div>
-        </div>
-      </UCard>
-
-      <!-- Statistics Cards -->
-      <div class="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <UCard>
-          <div class="flex items-center gap-4">
-            <div class="rounded-lg bg-primary-100 p-3 dark:bg-primary-900">
-              <UIcon
-                name="i-heroicons-academic-cap"
-                class="text-2xl text-primary-600 dark:text-primary-400"
-              />
-            </div>
-            <div>
-              <p class="text-sm text-gray-600 dark:text-gray-400">
-                Ukończone tematy
-              </p>
-              <p class="text-2xl font-bold text-gray-900 dark:text-white">
-                {{ stats.completedTopics }}
-              </p>
-            </div>
-          </div>
         </UCard>
-
-        <UCard>
-          <div class="flex items-center gap-4">
-            <div class="rounded-lg bg-green-100 p-3 dark:bg-green-900">
-              <UIcon
-                name="i-heroicons-check-badge"
-                class="text-2xl text-green-600 dark:text-green-400"
-              />
-            </div>
-            <div>
-              <p class="text-sm text-gray-600 dark:text-gray-400">
-                Zdane testy
-              </p>
-              <p class="text-2xl font-bold text-gray-900 dark:text-white">
-                {{ stats.passedTests }}
-              </p>
-            </div>
-          </div>
-        </UCard>
-
-        <UCard>
-          <div class="flex items-center gap-4">
-            <div class="rounded-lg bg-orange-100 p-3 dark:bg-orange-900">
-              <UIcon
-                name="i-heroicons-fire"
-                class="text-2xl text-orange-600 dark:text-orange-400"
-              />
-            </div>
-            <div>
-              <p class="text-sm text-gray-600 dark:text-gray-400">
-                Dni z rzędu
-              </p>
-              <p class="text-2xl font-bold text-gray-900 dark:text-white">
-                {{ stats.streak }}
-              </p>
-            </div>
-          </div>
-        </UCard>
-      </div>
-
-      <!-- Account Actions -->
-      <UCard>
-        <template #header>
-          <h2 class="text-xl font-semibold">Ustawienia konta</h2>
-        </template>
-
-        <div class="space-y-4">
-          <div class="flex items-center justify-between border-b border-gray-200 pb-4 dark:border-gray-700">
-            <div>
-              <h3 class="font-medium text-gray-900 dark:text-white">
-                Powiadomienia email
-              </h3>
-              <p class="text-sm text-gray-600 dark:text-gray-400">
-                Otrzymuj powiadomienia o nowych materiałach
-              </p>
-            </div>
-            <UToggle
-              v-model="emailNotifications"
-              @update:model-value="updateNotificationSettings"
-            />
-          </div>
-
-          <div class="flex items-center justify-between">
-            <div>
-              <h3 class="font-medium text-gray-900 dark:text-white">
-                Usuń konto
-              </h3>
-              <p class="text-sm text-gray-600 dark:text-gray-400">
-                Trwale usuń swoje konto i wszystkie dane
-              </p>
-            </div>
-            <UButton
-              color="red"
-              variant="outline"
-              @click="isConfirmingDelete = true"
-            >
-              Usuń konto
-            </UButton>
-          </div>
-        </div>
-      </UCard>
+      </ClientOnly>
     </div>
 
     <!-- Edit Profile Modal -->

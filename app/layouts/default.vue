@@ -47,26 +47,28 @@
               </ClientOnly>
 
               <!-- User Dropdown -->
-              <UDropdown v-if="isAuthenticated" :items="userMenuItems">
-                <UButton
-                  variant="ghost"
-                  color="gray"
-                  size="sm"
-                  trailing-icon="i-heroicons-chevron-down"
-                >
-                  <UAvatar
-                    :src="profile?.avatar_url"
-                    :alt="profile?.display_name || 'User'"
-                    size="xs"
-                  />
-                  <span class="hidden sm:inline">{{ profile?.display_name }}</span>
-                </UButton>
-              </UDropdown>
+              <ClientOnly>
+                <UDropdown v-if="isAuthenticated" :items="userMenuItems">
+                  <UButton
+                    variant="ghost"
+                    color="gray"
+                    size="sm"
+                    trailing-icon="i-heroicons-chevron-down"
+                  >
+                    <UAvatar
+                      :src="profile?.avatar_url"
+                      :alt="profile?.display_name || 'User'"
+                      size="xs"
+                    />
+                    <span class="hidden sm:inline">{{ profile?.display_name }}</span>
+                  </UButton>
+                </UDropdown>
 
-              <!-- Login Button -->
-              <UButton v-else to="/auth/login" color="primary" size="sm">
-                Zaloguj się
-              </UButton>
+                <!-- Login Button -->
+                <UButton v-else to="/auth/login" color="primary" size="sm">
+                  Zaloguj się
+                </UButton>
+              </ClientOnly>
             </div>
           </div>
         </div>
