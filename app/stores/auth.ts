@@ -35,7 +35,6 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   async function fetchProfile() {
-    console.log("fetchProfile", user.value);
     if (!user.value || !user.value.sub) {
       profile.value = null;
       return;
@@ -48,7 +47,6 @@ export const useAuthStore = defineStore("auth", () => {
         .eq("id", user.value.sub)
         .single();
 
-      console.log("data", data);
       console.log("error", error);
 
       if (error) {
