@@ -9,7 +9,7 @@
             name="i-heroicons-academic-cap"
             class="text-4xl text-primary-600"
           />
-          <h1 class="text-3xl font-bold">TylkoMatma</h1>
+          <h1 class="text-3xl font-bold">TylkoMatmaLabel</h1>
         </NuxtLink>
         <h2 class="mt-6 text-2xl font-bold text-gray-900 dark:text-white">
           Utwórz nowe konto
@@ -68,7 +68,9 @@
                 tabindex="-1"
               >
                 <UIcon
-                  :name="showPassword ? 'i-heroicons-eye-slash' : 'i-heroicons-eye'"
+                  :name="
+                    showPassword ? 'i-heroicons-eye-slash' : 'i-heroicons-eye'
+                  "
                   class="h-5 w-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                 />
               </button>
@@ -99,7 +101,11 @@
                 tabindex="-1"
               >
                 <UIcon
-                  :name="showConfirmPassword ? 'i-heroicons-eye-slash' : 'i-heroicons-eye'"
+                  :name="
+                    showConfirmPassword
+                      ? 'i-heroicons-eye-slash'
+                      : 'i-heroicons-eye'
+                  "
                   class="h-5 w-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                 />
               </button>

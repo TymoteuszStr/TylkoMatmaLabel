@@ -1,22 +1,27 @@
 <template>
   <div class="bg-white dark:bg-gray-950">
     <!-- Breadcrumb -->
-    <div class="border-b border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-900">
+    <div
+      class="border-b border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-900"
+    >
       <div class="container mx-auto px-4 py-4">
         <nav class="flex items-center gap-2 text-sm">
-          <NuxtLink to="/" class="text-gray-600 hover:text-primary-600 dark:text-gray-400">
+          <NuxtLink
+            to="/"
+            class="text-gray-600 hover:text-primary-600 dark:text-gray-400"
+          >
             Strona główna
           </NuxtLink>
           <UIcon name="i-heroicons-chevron-right" class="text-gray-400" />
-          <NuxtLink 
-            :to="`/${levelSlug}`" 
+          <NuxtLink
+            :to="`/${levelSlug}`"
             class="text-gray-600 hover:text-primary-600 dark:text-gray-400"
           >
             {{ topic?.category?.education_level?.name }}
           </NuxtLink>
           <UIcon name="i-heroicons-chevron-right" class="text-gray-400" />
-          <NuxtLink 
-            :to="`/${levelSlug}/${categorySlug}`" 
+          <NuxtLink
+            :to="`/${levelSlug}/${categorySlug}`"
             class="text-gray-600 hover:text-primary-600 dark:text-gray-400"
           >
             {{ topic?.category?.name }}
@@ -33,14 +38,24 @@
     <div class="container mx-auto px-4 py-12">
       <!-- Loading State -->
       <div v-if="loading" class="flex justify-center py-12">
-        <UIcon name="i-heroicons-arrow-path" class="animate-spin text-4xl text-primary-600" />
+        <UIcon
+          name="i-heroicons-arrow-path"
+          class="animate-spin text-4xl text-primary-600"
+        />
       </div>
 
       <!-- Error State -->
       <div v-else-if="error" class="text-center">
-        <UIcon name="i-heroicons-exclamation-triangle" class="mx-auto text-6xl text-red-500" />
+        <UIcon
+          name="i-heroicons-exclamation-triangle"
+          class="mx-auto text-6xl text-red-500"
+        />
         <h2 class="mt-4 text-2xl font-bold">Nie znaleziono tematu</h2>
-        <UButton :to="`/${levelSlug}/${categorySlug}`" class="mt-6" color="primary">
+        <UButton
+          :to="`/${levelSlug}/${categorySlug}`"
+          class="mt-6"
+          color="primary"
+        >
           Powrót do kategorii
         </UButton>
       </div>
@@ -52,7 +67,11 @@
           <UCard>
             <div class="space-y-4">
               <div>
-                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Poziom trudności</h3>
+                <h3
+                  class="text-sm font-medium text-gray-500 dark:text-gray-400"
+                >
+                  Poziom trudności
+                </h3>
                 <UBadge
                   v-if="topic?.difficulty_level"
                   :color="getDifficultyColor(topic.difficulty_level)"
@@ -63,16 +82,38 @@
                 </UBadge>
               </div>
               <div v-if="topic?.estimated_time">
-                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Szacowany czas</h3>
+                <h3
+                  class="text-sm font-medium text-gray-500 dark:text-gray-400"
+                >
+                  Szacowany czas
+                </h3>
                 <p class="mt-1 text-sm text-gray-900 dark:text-white">
                   {{ topic.estimated_time }} minut
                 </p>
               </div>
-              <div v-if="topic?.learning_objectives && topic.learning_objectives.length > 0">
-                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Cele nauki</h3>
-                <ul class="mt-2 space-y-1 text-sm text-gray-900 dark:text-white">
-                  <li v-for="(objective, idx) in topic.learning_objectives" :key="idx" class="flex gap-2">
-                    <UIcon name="i-heroicons-check-circle" class="text-green-600 mt-0.5" />
+              <div
+                v-if="
+                  topic?.learning_objectives &&
+                  topic.learning_objectives.length > 0
+                "
+              >
+                <h3
+                  class="text-sm font-medium text-gray-500 dark:text-gray-400"
+                >
+                  Cele nauki
+                </h3>
+                <ul
+                  class="mt-2 space-y-1 text-sm text-gray-900 dark:text-white"
+                >
+                  <li
+                    v-for="(objective, idx) in topic.learning_objectives"
+                    :key="idx"
+                    class="flex gap-2"
+                  >
+                    <UIcon
+                      name="i-heroicons-check-circle"
+                      class="text-green-600 mt-0.5"
+                    />
                     <span>{{ objective }}</span>
                   </li>
                 </ul>
@@ -88,7 +129,10 @@
             <h1 class="text-4xl font-bold text-gray-900 dark:text-white">
               {{ topic?.name }}
             </h1>
-            <p v-if="topic?.description" class="mt-4 text-lg text-gray-600 dark:text-gray-400">
+            <p
+              v-if="topic?.description"
+              class="mt-4 text-lg text-gray-600 dark:text-gray-400"
+            >
               {{ topic.description }}
             </p>
           </div>
@@ -105,24 +149,33 @@
                 :ui="{ body: { padding: 'p-6' } }"
               >
                 <div class="flex items-start gap-3 mb-4">
-                  <UIcon 
-                    :name="getMaterialIcon(material.type)" 
-                    class="text-2xl text-primary-600 dark:text-primary-400 mt-1" 
+                  <UIcon
+                    :name="getMaterialIcon(material.type)"
+                    class="text-2xl text-primary-600 dark:text-primary-400 mt-1"
                   />
                   <div>
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                    <h3
+                      class="text-xl font-semibold text-gray-900 dark:text-white"
+                    >
                       {{ material.title }}
                     </h3>
-                    <UBadge :color="getMaterialColor(material.type)" variant="subtle" class="mt-1">
+                    <UBadge
+                      :color="getMaterialColor(material.type)"
+                      variant="subtle"
+                      class="mt-1"
+                    >
                       {{ getMaterialLabel(material.type) }}
                     </UBadge>
                   </div>
                 </div>
-                
+
                 <!-- Render Material Content -->
-                <div v-if="material.content && material.content.length > 0" class="prose prose-gray dark:prose-invert max-w-none">
-                  <ContentRenderer 
-                    v-for="block in material.content" 
+                <div
+                  v-if="material.content && material.content.length > 0"
+                  class="prose prose-gray dark:prose-invert max-w-none"
+                >
+                  <ContentRenderer
+                    v-for="block in material.content"
                     :key="block.id"
                     :block="block"
                   />
@@ -142,22 +195,38 @@
                 :key="test.id"
                 :ui="{ body: { padding: 'p-6' } }"
                 class="hover:shadow-lg transition-shadow cursor-pointer"
-                @click="navigateTo(`/${levelSlug}/${categorySlug}/${topicSlug}/test/${test.id}`)"
+                @click="
+                  navigateTo(
+                    `/${levelSlug}/${categorySlug}/${topicSlug}/test/${test.id}`,
+                  )
+                "
               >
                 <div class="flex items-start justify-between gap-4">
                   <div class="flex-1">
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                    <h3
+                      class="text-xl font-semibold text-gray-900 dark:text-white"
+                    >
                       {{ test.title }}
                     </h3>
-                    <p v-if="test.description" class="mt-2 text-gray-600 dark:text-gray-400">
+                    <p
+                      v-if="test.description"
+                      class="mt-2 text-gray-600 dark:text-gray-400"
+                    >
                       {{ test.description }}
                     </p>
                     <div class="mt-4 flex flex-wrap gap-2">
                       <UBadge color="primary" variant="subtle">
-                        <UIcon name="i-heroicons-clipboard-document-check" class="mr-1" />
+                        <UIcon
+                          name="i-heroicons-clipboard-document-check"
+                          class="mr-1"
+                        />
                         Test
                       </UBadge>
-                      <UBadge v-if="test.time_limit" color="gray" variant="subtle">
+                      <UBadge
+                        v-if="test.time_limit"
+                        color="gray"
+                        variant="subtle"
+                      >
                         <UIcon name="i-heroicons-clock" class="mr-1" />
                         {{ test.time_limit }} min
                       </UBadge>
@@ -173,8 +242,14 @@
           </div>
 
           <!-- Empty State -->
-          <div v-if="materials.length === 0 && tests.length === 0" class="text-center py-12">
-            <UIcon name="i-heroicons-inbox" class="mx-auto text-6xl text-gray-400" />
+          <div
+            v-if="materials.length === 0 && tests.length === 0"
+            class="text-center py-12"
+          >
+            <UIcon
+              name="i-heroicons-inbox"
+              class="mx-auto text-6xl text-gray-400"
+            />
             <p class="mt-4 text-gray-600 dark:text-gray-400">
               Brak dostępnych materiałów i testów
             </p>
@@ -186,149 +261,150 @@
 </template>
 
 <script setup lang="ts">
-const route = useRoute()
-const levelSlug = route.params.level as string
-const categorySlug = route.params.category as string
-const topicSlug = route.params.topic as string
-const supabase = useSupabaseClient()
+const route = useRoute();
+const levelSlug = route.params.level as string;
+const categorySlug = route.params.category as string;
+const topicSlug = route.params.topic as string;
+const supabase = useSupabaseClient();
 
-const topic = ref<any>(null)
-const materials = ref<any[]>([])
-const tests = ref<any[]>([])
-const loading = ref(true)
-const error = ref(false)
+const topic = ref<any>(null);
+const materials = ref<any[]>([]);
+const tests = ref<any[]>([]);
+const loading = ref(true);
+const error = ref(false);
 
 // Fetch data
 onMounted(async () => {
   try {
     // Fetch education level
     const { data: level } = await supabase
-      .from('education_levels')
-      .select('id')
-      .eq('slug', levelSlug)
-      .eq('is_published', true)
-      .single()
+      .from("education_levels")
+      .select("id")
+      .eq("slug", levelSlug)
+      .eq("is_published", true)
+      .single();
 
-    if (!level) throw new Error('Level not found')
+    if (!level) throw new Error("Level not found");
 
     // Fetch category
     const { data: category } = await supabase
-      .from('categories')
-      .select('id, name, education_level:education_levels(name)')
-      .eq('education_level_id', level.id)
-      .eq('slug', categorySlug)
-      .eq('is_published', true)
-      .single()
+      .from("categories")
+      .select("id, name, education_level:education_levels(name)")
+      .eq("education_level_id", level.id)
+      .eq("slug", categorySlug)
+      .eq("is_published", true)
+      .single();
 
-    if (!category) throw new Error('Category not found')
+    if (!category) throw new Error("Category not found");
 
     // Fetch topic with relations
     const { data: top, error: topError } = await supabase
-      .from('topics')
-      .select(`
+      .from("topics")
+      .select(
+        `
         *,
         category:categories(
           *,
           education_level:education_levels(*)
         )
-      `)
-      .eq('category_id', category.id)
-      .eq('slug', topicSlug)
-      .eq('is_published', true)
-      .single()
+      `,
+      )
+      .eq("category_id", category.id)
+      .eq("slug", topicSlug)
+      .eq("is_published", true)
+      .single();
 
-    if (topError) throw topError
+    if (topError) throw topError;
 
-    topic.value = top
+    topic.value = top;
 
     // Fetch materials
     const { data: mats } = await supabase
-      .from('materials')
-      .select('*')
-      .eq('topic_id', top.id)
-      .eq('is_published', true)
-      .order('display_order')
+      .from("materials")
+      .select("*")
+      .eq("topic_id", top.id)
+      .eq("is_published", true)
+      .order("display_order");
 
-    materials.value = mats || []
+    materials.value = mats || [];
 
     // Fetch tests
     const { data: testData } = await supabase
-      .from('tests')
-      .select('*')
-      .eq('topic_id', top.id)
-      .eq('is_published', true)
-      .order('created_at', { ascending: false })
+      .from("tests")
+      .select("*")
+      .eq("topic_id", top.id)
+      .eq("is_published", true)
+      .order("created_at", { ascending: false });
 
-    tests.value = testData || []
+    tests.value = testData || [];
   } catch (err) {
-    console.error('Error fetching data:', err)
-    error.value = true
+    console.error("Error fetching data:", err);
+    error.value = true;
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-})
+});
 
 function getDifficultyColor(level: string) {
   const colors: Record<string, string> = {
-    basic: 'green',
-    intermediate: 'yellow',
-    advanced: 'red',
-  }
-  return colors[level] || 'gray'
+    basic: "green",
+    intermediate: "yellow",
+    advanced: "red",
+  };
+  return colors[level] || "gray";
 }
 
 function getDifficultyLabel(level: string) {
   const labels: Record<string, string> = {
-    basic: 'Podstawowy',
-    intermediate: 'Średniozaawansowany',
-    advanced: 'Zaawansowany',
-  }
-  return labels[level] || level
+    basic: "Podstawowy",
+    intermediate: "Średniozaawansowany",
+    advanced: "Zaawansowany",
+  };
+  return labels[level] || level;
 }
 
 function getMaterialIcon(type: string) {
   const icons: Record<string, string> = {
-    theory: 'i-heroicons-book-open',
-    example: 'i-heroicons-light-bulb',
-    exercise: 'i-heroicons-pencil-square',
-    summary: 'i-heroicons-document-text',
-  }
-  return icons[type] || 'i-heroicons-document'
+    theory: "i-heroicons-book-open",
+    example: "i-heroicons-light-bulb",
+    exercise: "i-heroicons-pencil-square",
+    summary: "i-heroicons-document-text",
+  };
+  return icons[type] || "i-heroicons-document";
 }
 
 function getMaterialColor(type: string) {
   const colors: Record<string, string> = {
-    theory: 'blue',
-    example: 'yellow',
-    exercise: 'green',
-    summary: 'purple',
-  }
-  return colors[type] || 'gray'
+    theory: "blue",
+    example: "yellow",
+    exercise: "green",
+    summary: "purple",
+  };
+  return colors[type] || "gray";
 }
 
 function getMaterialLabel(type: string) {
   const labels: Record<string, string> = {
-    theory: 'Teoria',
-    example: 'Przykład',
-    exercise: 'Ćwiczenie',
-    summary: 'Podsumowanie',
-  }
-  return labels[type] || type
+    theory: "Teoria",
+    example: "Przykład",
+    exercise: "Ćwiczenie",
+    summary: "Podsumowanie",
+  };
+  return labels[type] || type;
 }
 
 // SEO
 useHead(() => ({
-  title: topic.value?.seo_title || `${topic.value?.name} - TylkoMatma`,
+  title: topic.value?.seo_title || `${topic.value?.name} - TylkoMatmaLabel`,
   meta: [
     {
-      name: 'description',
-      content: topic.value?.seo_description || topic.value?.description || '',
+      name: "description",
+      content: topic.value?.seo_description || topic.value?.description || "",
     },
     {
-      name: 'keywords',
-      content: topic.value?.seo_keywords || '',
+      name: "keywords",
+      content: topic.value?.seo_keywords || "",
     },
   ],
-}))
+}));
 </script>
-

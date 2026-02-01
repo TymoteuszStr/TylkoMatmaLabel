@@ -6,7 +6,7 @@
         Panel Administratora
       </h1>
       <p class="mt-2 text-gray-600 dark:text-gray-400">
-        Zarządzaj platformą edukacyjną TylkoMatma
+        Zarządzaj platformą edukacyjną TylkoMatmaLabel
       </p>
     </div>
 
@@ -40,9 +40,7 @@
             />
           </div>
           <div>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
-              Kategorie
-            </p>
+            <p class="text-sm text-gray-600 dark:text-gray-400">Kategorie</p>
             <p class="text-2xl font-bold text-gray-900 dark:text-white">
               {{ stats.categories }}
             </p>
@@ -59,9 +57,7 @@
             />
           </div>
           <div>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
-              Tematy
-            </p>
+            <p class="text-sm text-gray-600 dark:text-gray-400">Tematy</p>
             <p class="text-2xl font-bold text-gray-900 dark:text-white">
               {{ stats.topics }}
             </p>
@@ -78,9 +74,7 @@
             />
           </div>
           <div>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
-              Użytkownicy
-            </p>
+            <p class="text-sm text-gray-600 dark:text-gray-400">Użytkownicy</p>
             <p class="text-2xl font-bold text-gray-900 dark:text-white">
               {{ stats.users }}
             </p>
@@ -205,11 +199,11 @@
 
 <script setup lang="ts">
 definePageMeta({
-  layout: 'admin',
-  middleware: 'admin',
-})
+  layout: "admin",
+  middleware: "admin",
+});
 
-const supabase = useSupabaseClient()
+const supabase = useSupabaseClient();
 
 // Stats
 const stats = ref({
@@ -217,91 +211,98 @@ const stats = ref({
   categories: 0,
   topics: 0,
   users: 0,
-})
+});
 
 // Recent activity
-const recentActivity = ref<any[]>([])
+const recentActivity = ref<any[]>([]);
 
 // Fetch statistics
 const fetchStats = async () => {
   try {
     // Fetch counts
-    const [levelsResult, categoriesResult, topicsResult, usersResult] = await Promise.all([
-      supabase.from('education_levels').select('id', { count: 'exact', head: true }),
-      supabase.from('categories').select('id', { count: 'exact', head: true }),
-      supabase.from('topics').select('id', { count: 'exact', head: true }),
-      supabase.from('user_profiles').select('id', { count: 'exact', head: true }),
-    ])
+    const [levelsResult, categoriesResult, topicsResult, usersResult] =
+      await Promise.all([
+        supabase
+          .from("education_levels")
+          .select("id", { count: "exact", head: true }),
+        supabase
+          .from("categories")
+          .select("id", { count: "exact", head: true }),
+        supabase.from("topics").select("id", { count: "exact", head: true }),
+        supabase
+          .from("user_profiles")
+          .select("id", { count: "exact", head: true }),
+      ]);
 
     stats.value = {
       levels: levelsResult.count || 0,
       categories: categoriesResult.count || 0,
       topics: topicsResult.count || 0,
       users: usersResult.count || 0,
-    }
+    };
   } catch (error) {
-    console.error('Failed to fetch stats:', error)
+    console.error("Failed to fetch stats:", error);
   }
-}
+};
 
 // Fetch recent activity (you can expand this based on your needs)
 const fetchRecentActivity = async () => {
   try {
     // For now, fetch recent topics as activity
     const { data } = await supabase
-      .from('topics')
-      .select('id, title, created_at')
-      .order('created_at', { ascending: false })
-      .limit(5)
+      .from("topics")
+      .select("id, title, created_at")
+      .order("created_at", { ascending: false })
+      .limit(5);
 
     if (data) {
       recentActivity.value = data.map((topic) => ({
         id: topic.id,
-        type: 'topic',
+        type: "topic",
         description: `Utworzono nowy temat: ${topic.title}`,
         created_at: topic.created_at,
-      }))
+      }));
     }
   } catch (error) {
-    console.error('Failed to fetch recent activity:', error)
+    console.error("Failed to fetch recent activity:", error);
   }
-}
+};
 
 // Get activity icon based on type
 const getActivityIcon = (type: string) => {
   const icons: Record<string, string> = {
-    topic: 'i-heroicons-book-open',
-    category: 'i-heroicons-folder',
-    test: 'i-heroicons-clipboard-document-check',
-    user: 'i-heroicons-user',
-  }
-  return icons[type] || 'i-heroicons-bell'
-}
+    topic: "i-heroicons-book-open",
+    category: "i-heroicons-folder",
+    test: "i-heroicons-clipboard-document-check",
+    user: "i-heroicons-user",
+  };
+  return icons[type] || "i-heroicons-bell";
+};
 
 // Format date
 const formatDate = (dateString: string) => {
-  const date = new Date(dateString)
-  const now = new Date()
-  const diffMs = now.getTime() - date.getTime()
-  const diffMins = Math.floor(diffMs / 60000)
-  const diffHours = Math.floor(diffMs / 3600000)
-  const diffDays = Math.floor(diffMs / 86400000)
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
 
-  if (diffMins < 1) return 'Przed chwilą'
-  if (diffMins < 60) return `${diffMins} min temu`
-  if (diffHours < 24) return `${diffHours} godz. temu`
-  if (diffDays < 7) return `${diffDays} dni temu`
-  
-  return date.toLocaleDateString('pl-PL', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
-}
+  if (diffMins < 1) return "Przed chwilą";
+  if (diffMins < 60) return `${diffMins} min temu`;
+  if (diffHours < 24) return `${diffHours} godz. temu`;
+  if (diffDays < 7) return `${diffDays} dni temu`;
+
+  return date.toLocaleDateString("pl-PL", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
 
 // Fetch data on mount
 onMounted(() => {
-  fetchStats()
-  fetchRecentActivity()
-})
+  fetchStats();
+  fetchRecentActivity();
+});
 </script>

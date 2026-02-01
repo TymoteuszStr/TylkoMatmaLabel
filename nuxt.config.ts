@@ -7,23 +7,25 @@ const __dirname = dirname(__filename);
 
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
-  
+
   app: {
     head: {
-      title: "TylkoMatma - Nauka matematyki online",
+      title: "TylkoMatmaLabel - Nauka matematyki online",
       htmlAttrs: {
         lang: "pl",
       },
       meta: [
-        { name: "description", content: "Kompleksowa platforma edukacyjna do nauki matematyki. Materiały, testy i śledzenie postępów dla uczniów liceum." },
+        {
+          name: "description",
+          content:
+            "Kompleksowa platforma edukacyjna do nauki matematyki. Materiały, testy i śledzenie postępów dla uczniów liceum.",
+        },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
       ],
-      link: [
-        { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
-      ],
+      link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
     },
   },
-  
+
   devtools: { enabled: true },
 
   modules: [
@@ -36,22 +38,22 @@ export default defineNuxtConfig({
     "@nuxtjs/supabase",
     "@pinia/nuxt",
   ],
-  
+
   css: ["~/assets/css/main.css"],
-  
+
   ssr: true,
-  
+
   // Color mode configuration (dark mode)
   colorMode: {
-    preference: 'light',
-    fallback: 'light',
-    classSuffix: '',
+    preference: "light",
+    fallback: "light",
+    classSuffix: "",
   },
-  
+
   alias: {
     "@": "..",
   },
-  
+
   vite: {
     resolve: {
       alias: {
@@ -59,12 +61,12 @@ export default defineNuxtConfig({
       },
     },
   },
-  
+
   // IMPORTANT: Disable automatic Supabase redirects
   supabase: {
     redirect: false,
   },
-  
+
   // Runtime config for environment variables
   runtimeConfig: {
     public: {

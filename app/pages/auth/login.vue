@@ -1,10 +1,15 @@
 <template>
-  <div class="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 dark:bg-gray-950 sm:px-6 lg:px-8">
+  <div
+    class="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 dark:bg-gray-950 sm:px-6 lg:px-8"
+  >
     <div class="w-full max-w-md">
       <div class="text-center">
         <NuxtLink to="/" class="inline-flex items-center justify-center gap-2">
-          <UIcon name="i-heroicons-academic-cap" class="text-4xl text-primary-600" />
-          <h1 class="text-3xl font-bold">TylkoMatma</h1>
+          <UIcon
+            name="i-heroicons-academic-cap"
+            class="text-4xl text-primary-600"
+          />
+          <h1 class="text-3xl font-bold">TylkoMatmaLabel</h1>
         </NuxtLink>
         <h2 class="mt-6 text-2xl font-bold text-gray-900 dark:text-white">
           Zaloguj się do konta
@@ -53,7 +58,9 @@
                 tabindex="-1"
               >
                 <UIcon
-                  :name="showPassword ? 'i-heroicons-eye-slash' : 'i-heroicons-eye'"
+                  :name="
+                    showPassword ? 'i-heroicons-eye-slash' : 'i-heroicons-eye'
+                  "
                   class="h-5 w-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                 />
               </button>
@@ -98,35 +105,34 @@
 <script setup lang="ts">
 definePageMeta({
   layout: false,
-})
+});
 
-const route = useRoute()
-const router = useRouter()
-const { signIn } = useAuth()
+const route = useRoute();
+const router = useRouter();
+const { signIn } = useAuth();
 
 const form = reactive({
-  email: '',
-  password: '',
-})
+  email: "",
+  password: "",
+});
 
-const loading = ref(false)
-const errorMessage = ref('')
-const showPassword = ref(false)
+const loading = ref(false);
+const errorMessage = ref("");
+const showPassword = ref(false);
 
 async function handleLogin() {
-  loading.value = true
-  errorMessage.value = ''
+  loading.value = true;
+  errorMessage.value = "";
 
-  const result = await signIn(form.email, form.password)
+  const result = await signIn(form.email, form.password);
 
-  loading.value = false
+  loading.value = false;
 
   if (result.success) {
-    const redirect = route.query.redirect as string || '/'
-    router.push(redirect)
+    const redirect = (route.query.redirect as string) || "/";
+    router.push(redirect);
   } else {
-    errorMessage.value = result.error || 'Błąd logowania'
+    errorMessage.value = result.error || "Błąd logowania";
   }
 }
 </script>
-
