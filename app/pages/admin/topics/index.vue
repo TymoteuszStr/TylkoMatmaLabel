@@ -3,9 +3,7 @@
     <!-- Page Header -->
     <div class="mb-8 flex items-center justify-between">
       <div>
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
-          Tematy
-        </h1>
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Tematy</h1>
         <p class="mt-2 text-gray-600 dark:text-gray-400">
           Zarządzaj tematami w systemie
         </p>
@@ -23,10 +21,16 @@
     <UCard>
       <ClientOnly>
         <div v-if="loading" class="py-12 text-center">
-          <UIcon name="i-heroicons-arrow-path" class="animate-spin text-2xl text-gray-400" />
+          <UIcon
+            name="i-heroicons-arrow-path"
+            class="animate-spin text-2xl text-gray-400"
+          />
         </div>
 
-        <div v-else-if="topics.length === 0" class="py-12 text-center text-gray-500 dark:text-gray-400">
+        <div
+          v-else-if="topics.length === 0"
+          class="py-12 text-center text-gray-500 dark:text-gray-400"
+        >
           Brak tematów. Dodaj pierwszy temat.
         </div>
 
@@ -39,13 +43,13 @@
             <div class="flex-1">
               <div class="flex items-center gap-3">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                  {{ topic.title }}
+                  {{ topic.name }}
                 </h3>
                 <UBadge
                   :color="topic.is_published ? 'green' : 'gray'"
                   variant="subtle"
                 >
-                  {{ topic.is_published ? 'Opublikowany' : 'Szkic' }}
+                  {{ topic.is_published ? "Opublikowany" : "Szkic" }}
                 </UBadge>
               </div>
               <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
@@ -80,14 +84,14 @@
       <UCard>
         <template #header>
           <h3 class="text-lg font-semibold">
-            {{ editingTopic ? 'Edytuj temat' : 'Dodaj nowy temat' }}
+            {{ editingTopic ? "Edytuj temat" : "Dodaj nowy temat" }}
           </h3>
         </template>
 
         <form class="space-y-4" @submit.prevent="handleSubmit">
-          <UFormGroup label="Tytuł" name="title" required>
+          <UFormGroup label="Tytuł" name="name" required>
             <UInput
-              v-model="form.title"
+              v-model="form.name"
               placeholder="np. Równania liniowe"
               size="lg"
             />
@@ -119,7 +123,11 @@
             />
           </UFormGroup>
 
-          <UFormGroup label="Kolejność wyświetlania" name="display_order" required>
+          <UFormGroup
+            label="Kolejność wyświetlania"
+            name="display_order"
+            required
+          >
             <UInput
               v-model.number="form.display_order"
               type="number"
@@ -131,24 +139,16 @@
           <UFormGroup label="Status" name="is_published">
             <UToggle v-model="form.is_published" />
             <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">
-              {{ form.is_published ? 'Opublikowany' : 'Szkic' }}
+              {{ form.is_published ? "Opublikowany" : "Szkic" }}
             </span>
           </UFormGroup>
 
           <div class="flex justify-end gap-2">
-            <UButton
-              color="gray"
-              variant="outline"
-              @click="cancelEdit"
-            >
+            <UButton color="gray" variant="outline" @click="cancelEdit">
               Anuluj
             </UButton>
-            <UButton
-              type="submit"
-              color="primary"
-              :loading="saving"
-            >
-              {{ editingTopic ? 'Zapisz zmiany' : 'Utwórz temat' }}
+            <UButton type="submit" color="primary" :loading="saving">
+              {{ editingTopic ? "Zapisz zmiany" : "Utwórz temat" }}
             </UButton>
           </div>
         </form>
@@ -165,24 +165,17 @@
         </template>
 
         <p class="text-gray-700 dark:text-gray-300">
-          Czy na pewno chcesz usunąć temat <strong>{{ topicToDelete?.title }}</strong>?
-          Ta operacja jest nieodwracalna.
+          Czy na pewno chcesz usunąć temat
+          <strong>{{ topicToDelete?.name }}</strong
+          >? Ta operacja jest nieodwracalna.
         </p>
 
         <template #footer>
           <div class="flex justify-end gap-2">
-            <UButton
-              color="gray"
-              variant="outline"
-              @click="isDeleting = false"
-            >
+            <UButton color="gray" variant="outline" @click="isDeleting = false">
               Anuluj
             </UButton>
-            <UButton
-              color="red"
-              :loading="deleting"
-              @click="handleDelete"
-            >
+            <UButton color="red" :loading="deleting" @click="handleDelete">
               Usuń
             </UButton>
           </div>
@@ -194,190 +187,188 @@
 
 <script setup lang="ts">
 definePageMeta({
-  layout: 'admin',
-  middleware: 'admin',
-})
+  layout: "admin",
+  middleware: "admin",
+});
 
-const supabase = useSupabaseClient()
-const toast = useToast()
+const supabase = useSupabaseClient();
+const toast = useToast();
 
 // State
-const topics = ref<any[]>([])
-const categories = ref<any[]>([])
-const loading = ref(true)
-const isCreating = ref(false)
-const editingTopic = ref<any | null>(null)
-const saving = ref(false)
-const isDeleting = ref(false)
-const topicToDelete = ref<any | null>(null)
-const deleting = ref(false)
+const topics = ref<any[]>([]);
+const categories = ref<any[]>([]);
+const loading = ref(true);
+const isCreating = ref(false);
+const editingTopic = ref<any | null>(null);
+const saving = ref(false);
+const isDeleting = ref(false);
+const topicToDelete = ref<any | null>(null);
+const deleting = ref(false);
 
 // Form
 const form = ref({
-  title: '',
-  slug: '',
-  description: '',
+  name: "",
+  slug: "",
+  description: "",
   category_id: null as string | null,
   display_order: 1,
   is_published: true,
-})
+});
 
 // Fetch topics
 const fetchTopics = async () => {
-  loading.value = true
+  loading.value = true;
   try {
     const { data, error } = await supabase
-      .from('topics')
-      .select('*, categories(name)')
-      .order('display_order', { ascending: true })
+      .from("topics")
+      .select("*, categories(name)")
+      .order("display_order", { ascending: true });
 
-    if (error) throw error
-    topics.value = data || []
+    if (error) throw error;
+    topics.value = data || [];
   } catch (error) {
-    console.error('Failed to fetch topics:', error)
+    console.error("Failed to fetch topics:", error);
     toast.add({
-      title: 'Błąd',
-      description: 'Nie udało się pobrać tematów',
-      color: 'red',
-    })
+      title: "Błąd",
+      description: "Nie udało się pobrać tematów",
+      color: "red",
+    });
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 // Fetch categories
 const fetchCategories = async () => {
   try {
     const { data, error } = await supabase
-      .from('categories')
-      .select('id, name')
-      .order('name', { ascending: true })
+      .from("categories")
+      .select("id, name")
+      .order("name", { ascending: true });
 
-    if (error) throw error
-    categories.value = data || []
+    if (error) throw error;
+    categories.value = data || [];
   } catch (error) {
-    console.error('Failed to fetch categories:', error)
+    console.error("Failed to fetch categories:", error);
   }
-}
+};
 
 // Edit topic
 const editTopic = (topic: any) => {
-  editingTopic.value = topic
+  editingTopic.value = topic;
   form.value = {
-    title: topic.title,
+    name: topic.name,
     slug: topic.slug,
-    description: topic.description || '',
+    description: topic.description || "",
     category_id: topic.category_id,
     display_order: topic.display_order,
     is_published: topic.is_published,
-  }
-  isCreating.value = true
-}
+  };
+  isCreating.value = true;
+};
 
 // Cancel edit
 const cancelEdit = () => {
-  isCreating.value = false
-  editingTopic.value = null
+  isCreating.value = false;
+  editingTopic.value = null;
   form.value = {
-    title: '',
-    slug: '',
-    description: '',
+    name: "",
+    slug: "",
+    description: "",
     category_id: null,
     display_order: 1,
     is_published: true,
-  }
-}
+  };
+};
 
 // Handle submit
 const handleSubmit = async () => {
-  saving.value = true
+  saving.value = true;
   try {
     if (editingTopic.value) {
       // Update existing topic
       const { error } = await supabase
-        .from('topics')
+        .from("topics")
         .update(form.value)
-        .eq('id', editingTopic.value.id)
+        .eq("id", editingTopic.value.id);
 
-      if (error) throw error
+      if (error) throw error;
 
       toast.add({
-        title: 'Sukces',
-        description: 'Temat został zaktualizowany',
-        color: 'green',
-      })
+        title: "Sukces",
+        description: "Temat został zaktualizowany",
+        color: "green",
+      });
     } else {
       // Create new topic
-      const { error } = await supabase
-        .from('topics')
-        .insert(form.value)
+      const { error } = await supabase.from("topics").insert(form.value);
 
-      if (error) throw error
+      if (error) throw error;
 
       toast.add({
-        title: 'Sukces',
-        description: 'Temat został utworzony',
-        color: 'green',
-      })
+        title: "Sukces",
+        description: "Temat został utworzony",
+        color: "green",
+      });
     }
 
-    await fetchTopics()
-    cancelEdit()
+    await fetchTopics();
+    cancelEdit();
   } catch (error) {
-    console.error('Failed to save topic:', error)
+    console.error("Failed to save topic:", error);
     toast.add({
-      title: 'Błąd',
-      description: 'Nie udało się zapisać tematu',
-      color: 'red',
-    })
+      title: "Błąd",
+      description: "Nie udało się zapisać tematu",
+      color: "red",
+    });
   } finally {
-    saving.value = false
+    saving.value = false;
   }
-}
+};
 
 // Confirm delete
 const confirmDelete = (topic: any) => {
-  topicToDelete.value = topic
-  isDeleting.value = true
-}
+  topicToDelete.value = topic;
+  isDeleting.value = true;
+};
 
 // Handle delete
 const handleDelete = async () => {
-  if (!topicToDelete.value) return
+  if (!topicToDelete.value) return;
 
-  deleting.value = true
+  deleting.value = true;
   try {
     const { error } = await supabase
-      .from('topics')
+      .from("topics")
       .delete()
-      .eq('id', topicToDelete.value.id)
+      .eq("id", topicToDelete.value.id);
 
-    if (error) throw error
+    if (error) throw error;
 
     toast.add({
-      title: 'Sukces',
-      description: 'Temat został usunięty',
-      color: 'green',
-    })
+      title: "Sukces",
+      description: "Temat został usunięty",
+      color: "green",
+    });
 
-    await fetchTopics()
-    isDeleting.value = false
-    topicToDelete.value = null
+    await fetchTopics();
+    isDeleting.value = false;
+    topicToDelete.value = null;
   } catch (error) {
-    console.error('Failed to delete topic:', error)
+    console.error("Failed to delete topic:", error);
     toast.add({
-      title: 'Błąd',
-      description: 'Nie udało się usunąć tematu',
-      color: 'red',
-    })
+      title: "Błąd",
+      description: "Nie udało się usunąć tematu",
+      color: "red",
+    });
   } finally {
-    deleting.value = false
+    deleting.value = false;
   }
-}
+};
 
 // Fetch on mount
 onMounted(async () => {
-  await fetchCategories()
-  await fetchTopics()
-})
+  await fetchCategories();
+  await fetchTopics();
+});
 </script>
