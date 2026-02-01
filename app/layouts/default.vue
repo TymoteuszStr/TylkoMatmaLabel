@@ -2,17 +2,22 @@
   <div>
     <div class="min-h-screen bg-gray-50 dark:bg-gray-950">
       <!-- Header -->
-      <header class="sticky top-0 z-50 border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+      <header
+        class="sticky top-0 z-50 border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900"
+      >
         <div class="container mx-auto px-4">
           <div class="flex h-16 items-center justify-between">
             <!-- Logo -->
             <NuxtLink to="/" class="flex items-center gap-2">
-              <UIcon name="i-heroicons-academic-cap" class="text-2xl text-primary-600" />
+              <UIcon
+                name="i-heroicons-academic-cap"
+                class="text-2xl text-primary-600"
+              />
               <span class="text-xl font-bold">TylkoMatma</span>
             </NuxtLink>
 
             <!-- Navigation -->
-            <nav class="hidden items-center gap-6 md:flex">
+            <nav v-if="isAdmin" class="hidden items-center gap-6 md:flex">
               <NuxtLink
                 to="/"
                 class="text-sm font-medium text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-primary-400"
@@ -60,7 +65,9 @@
                       :alt="profile?.display_name || 'User'"
                       size="xs"
                     />
-                    <span class="hidden sm:inline">{{ profile?.display_name }}</span>
+                    <span class="hidden sm:inline">{{
+                      profile?.display_name
+                    }}</span>
                   </UButton>
                 </UDropdown>
 
@@ -80,9 +87,13 @@
       </main>
 
       <!-- Footer -->
-      <footer class="border-t border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+      <footer
+        class="border-t border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900"
+      >
         <div class="container mx-auto px-4 py-8">
-          <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+          <div
+            class="flex flex-col items-center justify-between gap-4 md:flex-row"
+          >
             <div class="text-sm text-gray-600 dark:text-gray-400">
               © {{ currentYear }} TylkoMatma. Wszystkie prawa zastrzeżone.
             </div>
@@ -108,52 +119,51 @@
 </template>
 
 <script setup lang="ts">
-const { isAuthenticated, isAdmin, profile, signOut } = useAuth()
-const colorMode = useColorMode()
+const { isAuthenticated, isAdmin, profile, signOut } = useAuth();
+const colorMode = useColorMode();
 
 const isDark = computed({
-  get: () => colorMode.value === 'dark',
+  get: () => colorMode.value === "dark",
   set: () => {
-    colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
+    colorMode.preference = colorMode.value === "dark" ? "light" : "dark";
   },
-})
+});
 
-const currentYear = new Date().getFullYear()
+const currentYear = new Date().getFullYear();
 
 const toggleDarkMode = () => {
-  isDark.value = !isDark.value
-}
+  isDark.value = !isDark.value;
+};
 
 const userMenuItems = computed(() => [
   [
     {
-      label: profile.value?.display_name || 'Profil',
-      slot: 'account',
+      label: profile.value?.display_name || "Profil",
+      slot: "account",
       disabled: true,
     },
   ],
   [
     {
-      label: 'Mój profil',
-      icon: 'i-heroicons-user',
-      to: '/profile',
+      label: "Mój profil",
+      icon: "i-heroicons-user",
+      to: "/profile",
     },
     {
-      label: 'Moje wyniki',
-      icon: 'i-heroicons-chart-bar',
-      to: '/wyniki',
+      label: "Moje wyniki",
+      icon: "i-heroicons-chart-bar",
+      to: "/wyniki",
     },
   ],
   [
     {
-      label: 'Wyloguj',
-      icon: 'i-heroicons-arrow-right-on-rectangle',
+      label: "Wyloguj",
+      icon: "i-heroicons-arrow-right-on-rectangle",
       click: async () => {
-        await signOut()
-        navigateTo('/auth/login')
+        await signOut();
+        navigateTo("/auth/login");
       },
     },
   ],
-])
+]);
 </script>
-
