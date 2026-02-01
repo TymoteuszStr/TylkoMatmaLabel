@@ -330,6 +330,17 @@
         </template>
 
         <form class="space-y-4" @submit.prevent="handleChangePassword">
+          <UFormGroup label="Obecne hasło" name="currentPassword" required>
+            <UInput
+              v-model="passwordForm.currentPassword"
+              type="password"
+              placeholder="••••••••"
+              size="lg"
+              :disabled="passwordLoading"
+              autocomplete="current-password"
+            />
+          </UFormGroup>
+
           <UFormGroup label="Nowe hasło" name="password" required>
             <UInput
               v-model="passwordForm.newPassword"
@@ -381,7 +392,7 @@
               type="submit"
               color="primary"
               :loading="passwordLoading"
-              :disabled="!passwordForm.newPassword || !passwordForm.confirmPassword"
+              :disabled="!passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword"
             >
               Zmień hasło
             </UButton>
@@ -483,6 +494,7 @@ const editForm = reactive({
 })
 
 const passwordForm = reactive({
+  currentPassword: '',
   newPassword: '',
   confirmPassword: '',
 })
@@ -549,6 +561,17 @@ watch(() => profile.value, (newProfile) => {
   }
 }, { immediate: true })
 
+// Reset password form when modal is closed
+watch(() => isChangingPassword.value, (isOpen) => {
+  if (!isOpen) {
+    passwordForm.currentPassword = ''
+    passwordForm.newPassword = ''
+    passwordForm.confirmPassword = ''
+    passwordError.value = ''
+    passwordSuccess.value = false
+  }
+})
+
 // Update profile
 const handleUpdateProfile = async () => {
   updateLoading.value = true
@@ -610,6 +633,11 @@ const handleChangePassword = async () => {
   passwordError.value = ''
   passwordSuccess.value = false
 
+  if (!passwordForm.currentPassword) {
+    passwordError.value = 'Podaj obecne hasło'
+    return
+  }
+
   if (passwordForm.newPassword !== passwordForm.confirmPassword) {
     passwordError.value = 'Hasła nie są identyczne'
     return
@@ -620,9 +648,31 @@ const handleChangePassword = async () => {
     return
   }
 
+  if (passwordForm.currentPassword === passwordForm.newPassword) {
+    passwordError.value = 'Nowe hasło musi być inne niż obecne'
+    return
+  }
+
   passwordLoading.value = true
 
   try {
+    // First, verify the current password by attempting to sign in
+    if (!user.value?.email) {
+      throw new Error('Nie znaleziono adresu email użytkownika')
+    }
+
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: user.value.email,
+      password: passwordForm.currentPassword,
+    })
+
+    if (signInError) {
+      passwordError.value = 'Nieprawidłowe obecne hasło'
+      passwordLoading.value = false
+      return
+    }
+
+    // If verification successful, update to new password
     const { error } = await supabase.auth.updateUser({
       password: passwordForm.newPassword,
     })
@@ -637,6 +687,7 @@ const handleChangePassword = async () => {
     })
 
     // Reset form
+    passwordForm.currentPassword = ''
     passwordForm.newPassword = ''
     passwordForm.confirmPassword = ''
 
