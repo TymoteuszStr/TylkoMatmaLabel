@@ -120,6 +120,7 @@
               placeholder="Wybierz kategorię"
               value-attribute="id"
               option-attribute="name"
+              :ui-menu="{ option: { base: 'cursor-pointer' } }"
             />
           </UFormGroup>
 
@@ -186,23 +187,25 @@
 </template>
 
 <script setup lang="ts">
+import type { Topic, Category, TopicWithCategory, TopicUpdate, TopicInsert } from '~/types/database'
+
 definePageMeta({
   layout: "admin",
   middleware: "admin",
 });
 
-const supabase = useSupabaseClient();
+const supabase = useTypedSupabaseClient();
 const toast = useToast();
 
 // State
-const topics = ref<any[]>([]);
-const categories = ref<any[]>([]);
+const topics = ref<TopicWithCategory[]>([]);
+const categories = ref<Category[]>([]);
 const loading = ref(true);
 const isCreating = ref(false);
-const editingTopic = ref<any | null>(null);
+const editingTopic = ref<Topic | null>(null);
 const saving = ref(false);
 const isDeleting = ref(false);
-const topicToDelete = ref<any | null>(null);
+const topicToDelete = ref<Topic | null>(null);
 const deleting = ref(false);
 
 // Form
@@ -210,7 +213,7 @@ const form = ref({
   name: "",
   slug: "",
   description: "",
-  category_id: null as string | null,
+  category_id: "" as string,
   display_order: 1,
   is_published: true,
 });
@@ -254,7 +257,7 @@ const fetchCategories = async () => {
 };
 
 // Edit topic
-const editTopic = (topic: any) => {
+const editTopic = (topic: Topic) => {
   editingTopic.value = topic;
   form.value = {
     name: topic.name,
@@ -275,7 +278,7 @@ const cancelEdit = () => {
     name: "",
     slug: "",
     description: "",
-    category_id: null,
+    category_id: "",
     display_order: 1,
     is_published: true,
   };
@@ -287,9 +290,10 @@ const handleSubmit = async () => {
   try {
     if (editingTopic.value) {
       // Update existing topic
+      const updateData: TopicUpdate = form.value;
       const { error } = await supabase
         .from("topics")
-        .update(form.value)
+        .update(updateData as never)
         .eq("id", editingTopic.value.id);
 
       if (error) throw error;
@@ -301,7 +305,8 @@ const handleSubmit = async () => {
       });
     } else {
       // Create new topic
-      const { error } = await supabase.from("topics").insert(form.value);
+      const insertData: TopicInsert = form.value;
+      const { error } = await supabase.from("topics").insert(insertData as never);
 
       if (error) throw error;
 
@@ -327,7 +332,7 @@ const handleSubmit = async () => {
 };
 
 // Confirm delete
-const confirmDelete = (topic: any) => {
+const confirmDelete = (topic: Topic) => {
   topicToDelete.value = topic;
   isDeleting.value = true;
 };

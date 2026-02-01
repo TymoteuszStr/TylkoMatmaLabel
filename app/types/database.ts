@@ -498,3 +498,21 @@ export interface QuestionWithAnswers extends Question {
   answers: Answer[]
 }
 
+// ============================================
+// UTILITY TYPES
+// ============================================
+
+// Type for error handling in stores and components
+export interface AppError {
+  message: string
+  code?: string
+  details?: unknown
+}
+
+// Type for topic with category relation (used in admin pages)
+export interface TopicWithCategory extends Topic {
+  categories?: {
+    name: string
+  }
+}
+

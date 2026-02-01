@@ -109,12 +109,16 @@
 </template>
 
 <script setup lang="ts">
+import type { EducationLevel, Category } from "~/types/database";
+import type { PostgrestError } from "@supabase/supabase-js";
+
 const route = useRoute();
 const levelSlug = route.params.level as string;
-const supabase = useSupabaseClient();
 
-const educationLevel = ref<any>(null);
-const categories = ref<any[]>([]);
+const supabase = useTypedSupabaseClient();
+
+const educationLevel = ref<EducationLevel | null>(null);
+const categories = ref<Category[]>([]);
 const loading = ref(true);
 const error = ref(false);
 
@@ -122,16 +126,21 @@ const error = ref(false);
 onMounted(async () => {
   try {
     // Fetch education level
-    const { data: level, error: levelError } = await supabase
-      .from("education_levels")
-      .select("*")
-      .eq("slug", levelSlug)
-      .eq("is_published", true)
-      .single();
+    const {
+      data: level,
+      error: levelError,
+    }: { data: EducationLevel | null; error: PostgrestError | null } =
+      await supabase
+        .from("education_levels")
+        .select("*")
+        .eq("slug", levelSlug)
+        .eq("is_published", true)
+        .single();
 
     if (levelError) throw levelError;
+    if (!level) throw new Error("Level not found");
 
-    educationLevel.value = level;
+    educationLevel.value = level as EducationLevel;
 
     // Fetch categories
     const { data: cats, error: catsError } = await supabase

@@ -31,11 +31,7 @@
 
     <!-- Categories Table -->
     <UCard>
-      <UTable
-        :rows="filteredCategories"
-        :columns="columns"
-        :loading="loading"
-      >
+      <UTable :rows="filteredCategories" :columns="columns" :loading="loading">
         <template #name-data="{ row }">
           <div class="flex items-center gap-2">
             <UIcon
@@ -54,7 +50,7 @@
 
         <template #is_published-data="{ row }">
           <UBadge :color="row.is_published ? 'green' : 'gray'" variant="subtle">
-            {{ row.is_published ? 'Opublikowany' : 'Szkic' }}
+            {{ row.is_published ? "Opublikowany" : "Szkic" }}
           </UBadge>
         </template>
 
@@ -83,7 +79,7 @@
       <UCard>
         <template #header>
           <h3 class="text-xl font-bold">
-            {{ editingCategory ? 'Edytuj kategorię' : 'Nowa kategoria' }}
+            {{ editingCategory ? "Edytuj kategorię" : "Nowa kategoria" }}
           </h3>
         </template>
 
@@ -97,14 +93,21 @@
           </UFormGroup>
 
           <UFormGroup label="Nazwa" required>
-            <UInput v-model="form.name" placeholder="np. Analiza matematyczna" />
+            <UInput
+              v-model="form.name"
+              placeholder="np. Analiza matematyczna"
+            />
           </UFormGroup>
 
           <UFormGroup label="Slug" required>
             <UInput
               v-model="form.slug"
               placeholder="analiza-matematyczna"
-              @input="form.slug = $event.target.value.toLowerCase().replace(/\s+/g, '-')"
+              @input="
+                form.slug = $event.target.value
+                  .toLowerCase()
+                  .replace(/\s+/g, '-')
+              "
             />
           </UFormGroup>
 
@@ -117,7 +120,11 @@
           </UFormGroup>
 
           <UFormGroup label="Kolejność">
-            <UInput v-model="form.display_order" type="number" placeholder="0" />
+            <UInput
+              v-model="form.display_order"
+              type="number"
+              placeholder="0"
+            />
           </UFormGroup>
 
           <UFormGroup>
@@ -133,7 +140,7 @@
               Anuluj
             </UButton>
             <UButton type="submit" color="primary" :loading="saving">
-              {{ editingCategory ? 'Zapisz' : 'Utwórz' }}
+              {{ editingCategory ? "Zapisz" : "Utwórz" }}
             </UButton>
           </div>
         </form>
@@ -143,161 +150,161 @@
 </template>
 
 <script setup lang="ts">
-import type { Category, EducationLevel } from '~/types/database'
+import type { Category, EducationLevel } from "~/types/database";
 
 definePageMeta({
-  layout: 'admin',
-  middleware: 'admin',
-})
+  layout: "admin",
+  middleware: "admin",
+});
 
-const supabase = useSupabaseClient()
-const toast = useToast()
+const supabase = useTypedSupabaseClient();
+const toast = useToast();
 
-const categories = ref<Category[]>([])
-const levels = ref<EducationLevel[]>([])
-const loading = ref(true)
-const saving = ref(false)
-const showCreateModal = ref(false)
-const editingCategory = ref<Category | null>(null)
-const selectedLevel = ref('')
+const categories = ref<Category[]>([]);
+const levels = ref<EducationLevel[]>([]);
+const loading = ref(true);
+const saving = ref(false);
+const showCreateModal = ref(false);
+const editingCategory = ref<Category | null>(null);
+const selectedLevel = ref("");
 
 const form = reactive({
-  education_level_id: '',
-  name: '',
-  slug: '',
-  description: '',
-  icon: '',
+  education_level_id: "",
+  name: "",
+  slug: "",
+  description: "",
+  icon: "",
   display_order: 0,
   is_published: false,
-})
+});
 
 const columns = [
-  { key: 'name', label: 'Nazwa' },
-  { key: 'slug', label: 'Slug' },
-  { key: 'display_order', label: 'Kolejność' },
-  { key: 'is_published', label: 'Status' },
-  { key: 'actions', label: '' },
-]
+  { key: "name", label: "Nazwa" },
+  { key: "slug", label: "Slug" },
+  { key: "display_order", label: "Kolejność" },
+  { key: "is_published", label: "Status" },
+  { key: "actions", label: "" },
+];
 
 const levelOptions = computed(() => [
-  { value: '', label: 'Wszystkie poziomy' },
-  ...levels.value.map(level => ({
+  { value: "", label: "Wszystkie poziomy" },
+  ...levels.value.map((level) => ({
     value: level.id,
     label: level.name,
   })),
-])
+]);
 
 const filteredCategories = computed(() => {
-  if (!selectedLevel.value) return categories.value
-  return categories.value.filter(c => c.education_level_id === selectedLevel.value)
-})
+  if (!selectedLevel.value) return categories.value;
+  return categories.value.filter(
+    (c) => c.education_level_id === selectedLevel.value,
+  );
+});
 
 async function fetchData() {
-  loading.value = true
+  loading.value = true;
   try {
     const [categoriesRes, levelsRes] = await Promise.all([
       supabase
-        .from('categories')
-        .select('*, education_level:education_levels(*)')
-        .order('display_order'),
-      supabase
-        .from('education_levels')
-        .select('*')
-        .order('display_order'),
-    ])
+        .from("categories")
+        .select("*, education_level:education_levels(*)")
+        .order("display_order"),
+      supabase.from("education_levels").select("*").order("display_order"),
+    ]);
 
-    categories.value = categoriesRes.data || []
-    levels.value = levelsRes.data || []
+    categories.value = categoriesRes.data || [];
+    levels.value = levelsRes.data || [];
   } catch (error) {
-    console.error('Error fetching data:', error)
-    toast.add({ title: 'Błąd pobierania danych', color: 'red' })
+    console.error("Error fetching data:", error);
+    toast.add({ title: "Błąd pobierania danych", color: "red" });
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
 function editCategory(category: Category) {
-  editingCategory.value = category
+  editingCategory.value = category;
   Object.assign(form, {
     education_level_id: category.education_level_id,
     name: category.name,
     slug: category.slug,
-    description: category.description || '',
-    icon: category.icon || '',
+    description: category.description || "",
+    icon: category.icon || "",
     display_order: category.display_order,
     is_published: category.is_published,
-  })
-  showCreateModal.value = true
+  });
+  showCreateModal.value = true;
 }
 
 async function saveCategory() {
-  saving.value = true
+  saving.value = true;
   try {
     if (editingCategory.value) {
       const { error } = await supabase
-        .from('categories')
+        .from("categories")
         .update(form)
-        .eq('id', editingCategory.value.id)
+        .eq("id", editingCategory.value.id);
 
-      if (error) throw error
-      toast.add({ title: 'Kategoria zaktualizowana', color: 'green' })
+      if (error) throw error;
+      toast.add({ title: "Kategoria zaktualizowana", color: "green" });
     } else {
-      const { error } = await supabase
-        .from('categories')
-        .insert(form)
+      const { error } = await supabase.from("categories").insert(form);
 
-      if (error) throw error
-      toast.add({ title: 'Kategoria utworzona', color: 'green' })
+      if (error) throw error;
+      toast.add({ title: "Kategoria utworzona", color: "green" });
     }
 
-    showCreateModal.value = false
-    resetForm()
-    await fetchData()
-  } catch (error: any) {
-    console.error('Error saving category:', error)
-    toast.add({ title: error.message || 'Błąd zapisu', color: 'red' })
+    showCreateModal.value = false;
+    resetForm();
+    await fetchData();
+  } catch (error: unknown) {
+    console.error("Error saving category:", error);
+    const errorMessage = error instanceof Error ? error.message : "Błąd zapisu";
+    toast.add({ title: errorMessage, color: "red" });
   } finally {
-    saving.value = false
+    saving.value = false;
   }
 }
 
 async function deleteCategory(category: Category) {
-  if (!confirm(`Czy na pewno chcesz usunąć kategorię "${category.name}"?`)) return
+  if (!confirm(`Czy na pewno chcesz usunąć kategorię "${category.name}"?`))
+    return;
 
   try {
     const { error } = await supabase
-      .from('categories')
+      .from("categories")
       .delete()
-      .eq('id', category.id)
+      .eq("id", category.id);
 
-    if (error) throw error
-    toast.add({ title: 'Kategoria usunięta', color: 'green' })
-    await fetchData()
-  } catch (error: any) {
-    console.error('Error deleting category:', error)
-    toast.add({ title: error.message || 'Błąd usuwania', color: 'red' })
+    if (error) throw error;
+    toast.add({ title: "Kategoria usunięta", color: "green" });
+    await fetchData();
+  } catch (error: unknown) {
+    console.error("Error deleting category:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Błąd usuwania";
+    toast.add({ title: errorMessage, color: "red" });
   }
 }
 
 function resetForm() {
-  editingCategory.value = null
+  editingCategory.value = null;
   Object.assign(form, {
-    education_level_id: '',
-    name: '',
-    slug: '',
-    description: '',
-    icon: '',
+    education_level_id: "",
+    name: "",
+    slug: "",
+    description: "",
+    icon: "",
     display_order: 0,
     is_published: false,
-  })
+  });
 }
 
 onMounted(() => {
-  fetchData()
-})
+  fetchData();
+});
 
 watch(showCreateModal, (value) => {
-  if (!value) resetForm()
-})
+  if (!value) resetForm();
+});
 </script>
-

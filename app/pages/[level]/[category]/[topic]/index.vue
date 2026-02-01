@@ -261,15 +261,30 @@
 </template>
 
 <script setup lang="ts">
+import type {
+  TopicWithRelations,
+  Material,
+  Test,
+  Category,
+} from "~/types/database";
+import type { PostgrestError } from "@supabase/supabase-js";
+import { getDifficultyColor, getDifficultyLabel } from "~/utils/difficulty";
+import {
+  getMaterialColor,
+  getMaterialIcon,
+  getMaterialLabel,
+} from "~/utils/material";
+
 const route = useRoute();
+
 const levelSlug = route.params.level as string;
 const categorySlug = route.params.category as string;
 const topicSlug = route.params.topic as string;
-const supabase = useSupabaseClient();
+const supabase = useTypedSupabaseClient();
 
-const topic = ref<any>(null);
-const materials = ref<any[]>([]);
-const tests = ref<any[]>([]);
+const topic = ref<TopicWithRelations | null>(null);
+const materials = ref<Material[]>([]);
+const tests = ref<Test[]>([]);
 const loading = ref(true);
 const error = ref(false);
 
@@ -277,17 +292,22 @@ const error = ref(false);
 onMounted(async () => {
   try {
     // Fetch education level
-    const { data: level } = await supabase
-      .from("education_levels")
-      .select("id")
-      .eq("slug", levelSlug)
-      .eq("is_published", true)
-      .single();
+    const {
+      data: level,
+    }: { data: { id: string } | null; error: PostgrestError | null } =
+      await supabase
+        .from("education_levels")
+        .select("id")
+        .eq("slug", levelSlug)
+        .eq("is_published", true)
+        .single();
 
     if (!level) throw new Error("Level not found");
 
     // Fetch category
-    const { data: category } = await supabase
+    const {
+      data: category,
+    }: { data: Category | null; error: PostgrestError | null } = await supabase
       .from("categories")
       .select("id, name, education_level:education_levels(name)")
       .eq("education_level_id", level.id)
@@ -296,26 +316,29 @@ onMounted(async () => {
       .single();
 
     if (!category) throw new Error("Category not found");
-
     // Fetch topic with relations
-    const { data: top, error: topError } = await supabase
-      .from("topics")
-      .select(
-        `
+    const {
+      data: top,
+      error: topError,
+    }: { data: TopicWithRelations | null; error: PostgrestError | null } =
+      await supabase
+        .from("topics")
+        .select(
+          `
         *,
         category:categories(
           *,
           education_level:education_levels(*)
         )
       `,
-      )
-      .eq("category_id", category.id)
-      .eq("slug", topicSlug)
-      .eq("is_published", true)
-      .single();
+        )
+        .eq("category_id", category.id)
+        .eq("slug", topicSlug)
+        .eq("is_published", true)
+        .single();
 
     if (topError) throw topError;
-
+    if (!top) throw new Error("Topic not found");
     topic.value = top;
 
     // Fetch materials
@@ -344,54 +367,6 @@ onMounted(async () => {
     loading.value = false;
   }
 });
-
-function getDifficultyColor(level: string) {
-  const colors: Record<string, string> = {
-    basic: "green",
-    intermediate: "yellow",
-    advanced: "red",
-  };
-  return colors[level] || "gray";
-}
-
-function getDifficultyLabel(level: string) {
-  const labels: Record<string, string> = {
-    basic: "Podstawowy",
-    intermediate: "Średniozaawansowany",
-    advanced: "Zaawansowany",
-  };
-  return labels[level] || level;
-}
-
-function getMaterialIcon(type: string) {
-  const icons: Record<string, string> = {
-    theory: "i-heroicons-book-open",
-    example: "i-heroicons-light-bulb",
-    exercise: "i-heroicons-pencil-square",
-    summary: "i-heroicons-document-text",
-  };
-  return icons[type] || "i-heroicons-document";
-}
-
-function getMaterialColor(type: string) {
-  const colors: Record<string, string> = {
-    theory: "blue",
-    example: "yellow",
-    exercise: "green",
-    summary: "purple",
-  };
-  return colors[type] || "gray";
-}
-
-function getMaterialLabel(type: string) {
-  const labels: Record<string, string> = {
-    theory: "Teoria",
-    example: "Przykład",
-    exercise: "Ćwiczenie",
-    summary: "Podsumowanie",
-  };
-  return labels[type] || type;
-}
 
 // SEO
 useHead(() => ({

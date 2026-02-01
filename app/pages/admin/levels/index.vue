@@ -183,22 +183,24 @@
 </template>
 
 <script setup lang="ts">
+import type { EducationLevel } from '~/types/database'
+
 definePageMeta({
   layout: 'admin',
   middleware: 'admin',
 })
 
-const supabase = useSupabaseClient()
+const supabase = useTypedSupabaseClient()
 const toast = useToast()
 
 // State
-const levels = ref<any[]>([])
+const levels = ref<EducationLevel[]>([])
 const loading = ref(true)
 const isCreating = ref(false)
-const editingLevel = ref<any | null>(null)
+const editingLevel = ref<EducationLevel | null>(null)
 const saving = ref(false)
 const isDeleting = ref(false)
-const levelToDelete = ref<any | null>(null)
+const levelToDelete = ref<EducationLevel | null>(null)
 const deleting = ref(false)
 
 // Form
@@ -234,7 +236,7 @@ const fetchLevels = async () => {
 }
 
 // Edit level
-const editLevel = (level: any) => {
+const editLevel = (level: EducationLevel) => {
   editingLevel.value = level
   form.value = {
     name: level.name,
@@ -307,7 +309,7 @@ const handleSubmit = async () => {
 }
 
 // Confirm delete
-const confirmDelete = (level: any) => {
+const confirmDelete = (level: EducationLevel) => {
   levelToDelete.value = level
   isDeleting.value = true
 }

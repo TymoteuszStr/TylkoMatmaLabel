@@ -185,10 +185,10 @@
           </div>
           <div class="flex-1">
             <p class="text-sm font-medium text-gray-900 dark:text-white">
-              {{ activity.description }}
+              {{ activity.title }}
             </p>
             <p class="text-xs text-gray-500 dark:text-gray-400">
-              {{ formatDate(activity.created_at) }}
+              {{ formatDate(activity.timestamp) }}
             </p>
           </div>
         </div>
@@ -198,6 +198,9 @@
 </template>
 
 <script setup lang="ts">
+import type { Topic } from "~/types/database";
+import type { PostgrestError } from "@supabase/supabase-js";
+
 definePageMeta({
   layout: "admin",
   middleware: "admin",
@@ -214,7 +217,15 @@ const stats = ref({
 });
 
 // Recent activity
-const recentActivity = ref<any[]>([]);
+interface ActivityItem {
+  id: string;
+  type: string;
+  title: string;
+  timestamp: string;
+  user?: string;
+}
+
+const recentActivity = ref<ActivityItem[]>([]);
 
 // Fetch statistics
 const fetchStats = async () => {
@@ -249,18 +260,23 @@ const fetchStats = async () => {
 const fetchRecentActivity = async () => {
   try {
     // For now, fetch recent topics as activity
-    const { data } = await supabase
+    const {
+      data,
+      error,
+    }: { data: Topic[] | null; error: PostgrestError | null } = await supabase
       .from("topics")
-      .select("id, title, created_at")
+      .select("id, name, created_at")
       .order("created_at", { ascending: false })
       .limit(5);
 
+    if (error) throw error;
+    if (!data) throw new Error("No data returned");
     if (data) {
       recentActivity.value = data.map((topic) => ({
         id: topic.id,
         type: "topic",
-        description: `Utworzono nowy temat: ${topic.title}`,
-        created_at: topic.created_at,
+        title: `Utworzono nowy temat: ${topic.name}`,
+        timestamp: topic.created_at,
       }));
     }
   } catch (error) {

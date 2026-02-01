@@ -102,7 +102,9 @@
                 <div class="mt-4 flex flex-wrap gap-2">
                   <UBadge
                     v-if="topic.difficulty_level"
-                    :color="getDifficultyColor(topic.difficulty_level)"
+                    :color="
+                      getDifficultyColor(topic.difficulty_level as string)
+                    "
                     variant="subtle"
                   >
                     {{ getDifficultyLabel(topic.difficulty_level) }}
@@ -141,13 +143,21 @@
 </template>
 
 <script setup lang="ts">
+import type {
+  CategoryWithLevel,
+  Topic,
+} from "~/types/database";
+import type { PostgrestError } from "@supabase/supabase-js";
+import { getDifficultyColor, getDifficultyLabel } from "~/utils/difficulty";
+
 const route = useRoute();
+
 const levelSlug = route.params.level as string;
 const categorySlug = route.params.category as string;
-const supabase = useSupabaseClient();
+const supabase = useTypedSupabaseClient();
 
-const category = ref<any>(null);
-const topics = ref<any[]>([]);
+const category = ref<CategoryWithLevel | null>(null);
+const topics = ref<Topic[]>([]);
 const loading = ref(true);
 const error = ref(false);
 
@@ -155,30 +165,44 @@ const error = ref(false);
 onMounted(async () => {
   try {
     // Fetch education level
-    const { data: level } = await supabase
+    const {
+      data: level,
+      error: levelError,
+    }: {
+      data: { id: string; name: string } | null;
+      error: PostgrestError | null;
+    } = await supabase
       .from("education_levels")
       .select("id, name")
       .eq("slug", levelSlug)
       .eq("is_published", true)
       .single();
 
+    if (levelError) throw levelError;
     if (!level) throw new Error("Level not found");
 
     // Fetch category with education level
-    const { data: cat, error: catError } = await supabase
-      .from("categories")
-      .select("*, education_level:education_levels(*)")
-      .eq("education_level_id", level.id)
-      .eq("slug", categorySlug)
-      .eq("is_published", true)
-      .single();
+    const {
+      data: cat,
+      error: catError,
+    }: { data: CategoryWithLevel | null; error: PostgrestError | null } =
+      await supabase
+        .from("categories")
+        .select("*, education_level:education_levels(*)")
+        .eq("education_level_id", level.id)
+        .eq("slug", categorySlug)
+        .eq("is_published", true)
+        .single();
 
     if (catError) throw catError;
-
+    if (!cat) throw new Error("Category not found");
     category.value = cat;
 
     // Fetch topics
-    const { data: tops, error: topsError } = await supabase
+    const {
+      data: tops,
+      error: topsError,
+    }: { data: Topic[] | null; error: PostgrestError | null } = await supabase
       .from("topics")
       .select("*")
       .eq("category_id", cat.id)
@@ -195,24 +219,6 @@ onMounted(async () => {
     loading.value = false;
   }
 });
-
-function getDifficultyColor(level: string) {
-  const colors: Record<string, string> = {
-    basic: "green",
-    intermediate: "yellow",
-    advanced: "red",
-  };
-  return colors[level] || "gray";
-}
-
-function getDifficultyLabel(level: string) {
-  const labels: Record<string, string> = {
-    basic: "Podstawowy",
-    intermediate: "Średniozaawansowany",
-    advanced: "Zaawansowany",
-  };
-  return labels[level] || level;
-}
 
 // SEO
 useHead(() => ({

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { Test, TestWithQuestions, QuestionWithAnswers, Answer } from '~/types/database'
+import type {  TestWithQuestions, Answer } from '~/types/database'
 
 interface TestAnswer {
   questionId: string
@@ -20,7 +20,7 @@ interface TestResult {
 }
 
 export const useTestStore = defineStore('test', () => {
-  const supabase = useSupabaseClient()
+  const supabase = useTypedSupabaseClient()
 
   // State
   const currentTest = ref<TestWithQuestions | null>(null)
@@ -69,8 +69,9 @@ export const useTestStore = defineStore('test', () => {
 
       currentTest.value = data as TestWithQuestions
       return data
-    } catch (err: any) {
-      error.value = err.message
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+      error.value = errorMessage
       console.error('Failed to fetch test:', err)
       return null
     } finally {
@@ -107,7 +108,7 @@ export const useTestStore = defineStore('test', () => {
     }
 
     // Calculate score
-    currentTest.value.test_questions?.forEach((tq: any) => {
+    currentTest.value.test_questions?.forEach((tq) => {
       const userAnswer = testAnswers.value.get(tq.question.id)
       const correctAnswer = tq.question.answers.find((a: Answer) => a.is_correct)
 
