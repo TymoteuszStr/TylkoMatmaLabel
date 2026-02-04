@@ -153,16 +153,18 @@
                   </div>
                   <div class="flex shrink-0 gap-1">
                     <UButton
-                      size="xs"
+                      size="sm"
                       variant="ghost"
                       icon="i-heroicons-pencil"
+                      title="Edytuj pytanie"
                       @click="editQuestion(test, tq.questions as Question & { answers: Answer[] })"
                     />
                     <UButton
-                      size="xs"
-                      variant="ghost"
+                      size="sm"
+                      variant="soft"
                       color="red"
                       icon="i-heroicons-trash"
+                      title="Usuń pytanie z testu"
                       @click="removeQuestionFromTest(test, tq)"
                     />
                   </div>
@@ -497,12 +499,52 @@
       </UCard>
     </UModal>
 
-    <!-- Delete Confirmation Modal -->
+    <!-- Remove Question from Test Modal -->
+    <UModal v-model="isRemovingQuestion">
+      <UCard>
+        <template #header>
+          <h3 class="text-lg font-semibold text-orange-600 dark:text-orange-400">
+            Usuń pytanie z testu
+          </h3>
+        </template>
+
+        <div class="space-y-3">
+          <p class="text-gray-700 dark:text-gray-300">
+            Czy na pewno chcesz usunąć to pytanie z testu?
+          </p>
+          <div class="rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800">
+            <p class="font-medium text-gray-900 dark:text-white">
+              {{ questionToRemove?.questions?.content }}
+            </p>
+          </div>
+          <div class="flex items-center gap-2 rounded-lg bg-blue-50 p-3 dark:bg-blue-900/20">
+            <UIcon name="i-heroicons-information-circle" class="h-5 w-5 text-blue-600 dark:text-blue-400" />
+            <p class="text-sm text-blue-900 dark:text-blue-100">
+              <strong>Uwaga:</strong> Pytanie zostanie usunięte tylko z tego testu. 
+              Pozostanie w banku pytań i innych testach.
+            </p>
+          </div>
+        </div>
+
+        <template #footer>
+          <div class="flex justify-end gap-2">
+            <UButton color="gray" variant="outline" @click="isRemovingQuestion = false">
+              Anuluj
+            </UButton>
+            <UButton color="orange" :loading="removingQuestion" @click="confirmRemoveQuestion">
+              Usuń z testu
+            </UButton>
+          </div>
+        </template>
+      </UCard>
+    </UModal>
+
+    <!-- Delete Test Confirmation Modal -->
     <UModal v-model="isDeleting">
       <UCard>
         <template #header>
           <h3 class="text-lg font-semibold text-red-600 dark:text-red-400">
-            Potwierdź usunięcie
+            Potwierdź usunięcie testu
           </h3>
         </template>
 
@@ -518,7 +560,7 @@
               Anuluj
             </UButton>
             <UButton color="red" :loading="deleting" @click="handleDelete">
-              Usuń
+              Usuń test
             </UButton>
           </div>
         </template>
@@ -586,6 +628,11 @@ const loadingAvailableQuestions = ref(false);
 const questionSearch = ref('');
 const selectedQuestionToAdd = ref<(Question & { answers: Answer[] }) | null>(null);
 const addingExistingQuestion = ref(false);
+
+// Remove question from test modal state
+const isRemovingQuestion = ref(false);
+const questionToRemove = ref<(TestQuestion & { questions: Question & { answers: Answer[] } }) | null>(null);
+const removingQuestion = ref(false);
 
 function toggleExpandTest(testId: string) {
   expandedTestId.value = expandedTestId.value === testId ? null : testId;
@@ -999,21 +1046,35 @@ async function addExistingQuestionToTest() {
   }
 }
 
-async function removeQuestionFromTest(
+function removeQuestionFromTest(
   test: Test,
   tq: TestQuestion & { questions: Question & { answers: Answer[] } }
 ) {
-  if (!confirm("Usunąć to pytanie z testu? Pytanie pozostanie w bazie.")) return;
+  questionToRemove.value = tq;
+  isRemovingQuestion.value = true;
+}
 
+async function confirmRemoveQuestion() {
+  if (!questionToRemove.value) return;
+
+  removingQuestion.value = true;
   try {
     const { error } = await supabase
       .from("test_questions")
       .delete()
-      .eq("id", tq.id);
+      .eq("id", questionToRemove.value.id);
 
     if (error) throw error;
-    toast.add({ title: "Pytanie usunięte z testu", color: "green" });
+    
+    toast.add({ 
+      title: "Pytanie usunięte z testu", 
+      description: "Pytanie pozostało w banku pytań",
+      color: "green" 
+    });
+    
     await fetchTests();
+    isRemovingQuestion.value = false;
+    questionToRemove.value = null;
   } catch (error) {
     console.error("Failed to remove question:", error);
     toast.add({
@@ -1021,6 +1082,8 @@ async function removeQuestionFromTest(
       description: "Nie udało się usunąć pytania z testu",
       color: "red",
     });
+  } finally {
+    removingQuestion.value = false;
   }
 }
 
