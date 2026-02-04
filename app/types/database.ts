@@ -516,3 +516,14 @@ export interface TopicWithCategory extends Topic {
   }
 }
 
+// Type for material with topic relation (used in admin pages)
+export interface MaterialWithTopic extends Material {
+  topics?: {
+    name: string
+    slug: string
+    categories?: {
+      name: string
+    }
+  }
+}
+
