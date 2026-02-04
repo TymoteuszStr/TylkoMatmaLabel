@@ -10,11 +10,7 @@
           Zarządzaj pytaniami i odpowiedziami (A, B, C, D)
         </p>
       </div>
-      <UButton
-        color="primary"
-        icon="i-heroicons-plus"
-        @click="openCreateModal"
-      >
+      <UButton color="primary" icon="i-heroicons-plus" @click="openCreateModal">
         Dodaj pytanie
       </UButton>
     </div>
@@ -58,7 +54,11 @@
           v-else-if="filteredQuestions.length === 0"
           class="py-12 text-center text-gray-500 dark:text-gray-400"
         >
-          {{ searchQuery ? 'Brak wyników wyszukiwania' : 'Brak pytań. Dodaj pierwsze pytanie.' }}
+          {{
+            searchQuery
+              ? "Brak wyników wyszukiwania"
+              : "Brak pytań. Dodaj pierwsze pytanie."
+          }}
         </div>
 
         <div v-else class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -70,7 +70,9 @@
             <div class="flex items-start justify-between gap-4">
               <div class="min-w-0 flex-1">
                 <div class="flex items-center gap-3">
-                  <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  <span
+                    class="text-sm font-medium text-gray-500 dark:text-gray-400"
+                  >
                     #{{ idx + 1 + (currentPage - 1) * itemsPerPage }}
                   </span>
                   <UBadge
@@ -84,8 +86,10 @@
                     {{ question.answers?.length || 0 }} odpowiedzi
                   </UBadge>
                 </div>
-                
-                <p class="mt-2 text-base font-medium text-gray-900 dark:text-white">
+
+                <p
+                  class="mt-2 text-base font-medium text-gray-900 dark:text-white"
+                >
                   {{ question.content }}
                 </p>
 
@@ -139,7 +143,9 @@
                   {{ question.explanation }}
                 </p>
 
-                <div class="mt-2 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-500">
+                <div
+                  class="mt-2 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-500"
+                >
                   <span>Utworzono: {{ formatDate(question.created_at) }}</span>
                   <span v-if="question.updated_at !== question.created_at">
                     | Edytowano: {{ formatDate(question.updated_at) }}
@@ -172,7 +178,10 @@
         >
           <div class="text-sm text-gray-500 dark:text-gray-400">
             Pytania {{ (currentPage - 1) * itemsPerPage + 1 }} -
-            {{ Math.min(currentPage * itemsPerPage, filteredQuestions.length) }} z
+            {{
+              Math.min(currentPage * itemsPerPage, filteredQuestions.length)
+            }}
+            z
             {{ filteredQuestions.length }}
           </div>
           <div class="flex gap-2">
@@ -200,7 +209,7 @@
       <UCard>
         <template #header>
           <h3 class="text-lg font-semibold">
-            {{ editingQuestion ? 'Edytuj pytanie' : 'Dodaj nowe pytanie' }}
+            {{ editingQuestion ? "Edytuj pytanie" : "Dodaj nowe pytanie" }}
           </h3>
         </template>
 
@@ -281,7 +290,7 @@
               Anuluj
             </UButton>
             <UButton type="submit" color="primary" :loading="saving">
-              {{ editingQuestion ? 'Zapisz zmiany' : 'Dodaj pytanie' }}
+              {{ editingQuestion ? "Zapisz zmiany" : "Dodaj pytanie" }}
             </UButton>
           </div>
         </form>
@@ -301,13 +310,16 @@
           <p class="text-gray-700 dark:text-gray-300">
             Czy na pewno chcesz usunąć to pytanie?
           </p>
-          <div class="rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800">
+          <div
+            class="rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800"
+          >
             <p class="font-medium text-gray-900 dark:text-white">
               {{ questionToDelete?.content }}
             </p>
           </div>
           <p class="text-sm text-gray-600 dark:text-gray-400">
-            Ta operacja jest nieodwracalna. Pytanie zostanie usunięte ze wszystkich testów.
+            Ta operacja jest nieodwracalna. Pytanie zostanie usunięte ze
+            wszystkich testów.
           </p>
         </div>
 
@@ -327,255 +339,278 @@
 </template>
 
 <script setup lang="ts">
-import type { Question, Answer, DifficultyLevel } from '~/types/database'
+import type { Question, Answer, DifficultyLevel } from "~/types/database";
 
 definePageMeta({
-  layout: 'admin',
-  middleware: 'admin',
-})
+  layout: "admin",
+  middleware: "admin",
+});
 
-const supabase = useTypedSupabaseClient()
-const toast = useToast()
+const supabase = useTypedSupabaseClient();
+const toast = useToast();
 
 // Types
 interface QuestionWithAnswers extends Question {
-  answers?: Answer[]
+  answers?: Answer[];
 }
 
 // State
-const questions = ref<QuestionWithAnswers[]>([])
-const loading = ref(true)
-const isModalOpen = ref(false)
-const editingQuestion = ref<QuestionWithAnswers | null>(null)
-const saving = ref(false)
-const isDeleting = ref(false)
-const questionToDelete = ref<QuestionWithAnswers | null>(null)
-const deleting = ref(false)
+const questions = ref<QuestionWithAnswers[]>([]);
+const loading = ref(true);
+const isModalOpen = ref(false);
+const editingQuestion = ref<QuestionWithAnswers | null>(null);
+const saving = ref(false);
+const isDeleting = ref(false);
+const questionToDelete = ref<QuestionWithAnswers | null>(null);
+const deleting = ref(false);
 
 // Filter & Search
-const searchQuery = ref('')
-const filterDifficulty = ref<DifficultyLevel | null>(null)
-const currentPage = ref(1)
-const itemsPerPage = 10
+const searchQuery = ref("");
+const filterDifficulty = ref<DifficultyLevel | null>(null);
+const currentPage = ref(1);
+const itemsPerPage = 10;
 
 // Form
 const form = ref({
-  content: '',
-  explanation: '' as string | null,
+  content: "",
+  explanation: "" as string | null,
   difficulty_level: null as DifficultyLevel | null,
-  correctAnswer: 'A' as 'A' | 'B' | 'C' | 'D',
+  correctAnswer: "A" as "A" | "B" | "C" | "D",
   answers: [
-    { label: 'A' as const, content: '' },
-    { label: 'B' as const, content: '' },
-    { label: 'C' as const, content: '' },
-    { label: 'D' as const, content: '' },
+    { label: "A" as const, content: "" },
+    { label: "B" as const, content: "" },
+    { label: "C" as const, content: "" },
+    { label: "D" as const, content: "" },
   ],
-})
+});
 
 const difficultyOptions = [
-  { value: 'basic', label: 'Podstawowy' },
-  { value: 'intermediate', label: 'Średniozaawansowany' },
-  { value: 'advanced', label: 'Zaawansowany' },
-]
+  { value: "basic", label: "Podstawowy" },
+  { value: "intermediate", label: "Średniozaawansowany" },
+  { value: "advanced", label: "Zaawansowany" },
+];
 
 // Computed
 const filteredQuestions = computed(() => {
-  let result = questions.value
+  let result = questions.value;
 
   // Filter by search
   if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
-    result = result.filter((q) => q.content.toLowerCase().includes(query))
+    const query = searchQuery.value.toLowerCase();
+    result = result.filter((q) => q.content.toLowerCase().includes(query));
   }
 
   // Filter by difficulty
   if (filterDifficulty.value) {
-    result = result.filter((q) => q.difficulty_level === filterDifficulty.value)
+    result = result.filter(
+      (q) => q.difficulty_level === filterDifficulty.value,
+    );
   }
 
-  return result
-})
+  return result;
+});
 
-const totalPages = computed(() => Math.ceil(filteredQuestions.value.length / itemsPerPage))
+const totalPages = computed(() =>
+  Math.ceil(filteredQuestions.value.length / itemsPerPage),
+);
 
 const paginatedQuestions = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage
-  const end = start + itemsPerPage
-  return filteredQuestions.value.slice(start, end)
-})
+  const start = (currentPage.value - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  return filteredQuestions.value.slice(start, end);
+});
 
 // Helpers
 function getDifficultyColor(level: DifficultyLevel): string {
   const colors = {
-    basic: 'green',
-    intermediate: 'yellow',
-    advanced: 'red',
-  }
-  return colors[level] || 'gray'
+    basic: "green",
+    intermediate: "yellow",
+    advanced: "red",
+  };
+  return colors[level] || "gray";
 }
 
 function getDifficultyLabel(level: DifficultyLevel): string {
   const labels = {
-    basic: 'Podstawowy',
-    intermediate: 'Średniozaawansowany',
-    advanced: 'Zaawansowany',
-  }
-  return labels[level] || level
+    basic: "Podstawowy",
+    intermediate: "Średniozaawansowany",
+    advanced: "Zaawansowany",
+  };
+  return labels[level] || level;
 }
 
 function formatDate(date: string): string {
-  return new Date(date).toLocaleDateString('pl-PL', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
+  return new Date(date).toLocaleDateString("pl-PL", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 // Fetch questions
 async function fetchQuestions() {
-  loading.value = true
+  loading.value = true;
   try {
     const { data, error } = await supabase
-      .from('questions')
-      .select('*, answers(*)')
-      .order('created_at', { ascending: false })
+      .from("questions")
+      .select("*, answers(*)")
+      .order("created_at", { ascending: false });
 
-    if (error) throw error
-    questions.value = (data || []) as QuestionWithAnswers[]
+    if (error) throw error;
+    questions.value = (data || []) as QuestionWithAnswers[];
   } catch (error) {
-    console.error('Failed to fetch questions:', error)
+    console.error("Failed to fetch questions:", error);
     toast.add({
-      title: 'Błąd',
-      description: 'Nie udało się pobrać pytań',
-      color: 'red',
-    })
+      title: "Błąd",
+      description: "Nie udało się pobrać pytań",
+      color: "red",
+    });
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
 // Modal
 function openCreateModal() {
-  editingQuestion.value = null
-  resetForm()
-  isModalOpen.value = true
+  editingQuestion.value = null;
+  resetForm();
+  isModalOpen.value = true;
 }
 
 function editQuestion(question: QuestionWithAnswers) {
-  editingQuestion.value = question
+  editingQuestion.value = question;
   form.value = {
     content: question.content,
     explanation: question.explanation || null,
     difficulty_level: question.difficulty_level || null,
     correctAnswer:
-      (question.answers?.find((a) => a.is_correct)?.label as 'A' | 'B' | 'C' | 'D') || 'A',
-    answers: ['A', 'B', 'C', 'D'].map((label) => {
-      const ans = question.answers?.find((a) => a.label === label)
+      (question.answers?.find((a) => a.is_correct)?.label as
+        | "A"
+        | "B"
+        | "C"
+        | "D") || "A",
+    answers: ["A", "B", "C", "D"].map((label) => {
+      const ans = question.answers?.find((a) => a.label === label);
       return {
-        label: label as 'A' | 'B' | 'C' | 'D',
-        content: ans?.content ?? '',
-      }
+        label: label as "A" | "B" | "C" | "D",
+        content: ans?.content ?? "",
+      };
     }),
-  }
-  isModalOpen.value = true
+  };
+  isModalOpen.value = true;
 }
 
 function closeModal() {
-  isModalOpen.value = false
-  editingQuestion.value = null
-  resetForm()
+  isModalOpen.value = false;
+  editingQuestion.value = null;
+  resetForm();
 }
 
 function resetForm() {
   form.value = {
-    content: '',
+    content: "",
     explanation: null,
     difficulty_level: null,
-    correctAnswer: 'A',
+    correctAnswer: "A",
     answers: [
-      { label: 'A', content: '' },
-      { label: 'B', content: '' },
-      { label: 'C', content: '' },
-      { label: 'D', content: '' },
+      { label: "A", content: "" },
+      { label: "B", content: "" },
+      { label: "C", content: "" },
+      { label: "D", content: "" },
     ],
-  }
+  };
 }
 
 // Submit
 async function handleSubmit() {
   if (!form.value.content.trim()) {
-    toast.add({ title: 'Podaj treść pytania', color: 'red' })
-    return
+    toast.add({ title: "Podaj treść pytania", color: "red" });
+    return;
   }
 
-  const emptyAnswers = form.value.answers.filter((a) => !a.content.trim())
+  const emptyAnswers = form.value.answers.filter((a) => !a.content.trim());
   if (emptyAnswers.length > 0) {
     toast.add({
-      title: 'Wypełnij wszystkie odpowiedzi (A, B, C, D)',
-      color: 'red',
-    })
-    return
+      title: "Wypełnij wszystkie odpowiedzi (A, B, C, D)",
+      color: "red",
+    });
+    return;
   }
 
-  saving.value = true
+  saving.value = true;
   try {
     if (editingQuestion.value) {
       // Update question
       const { error: qError } = await supabase
-        .from('questions')
+        .from("questions")
         .update({
           content: form.value.content.trim(),
           explanation: form.value.explanation?.trim() || null,
           difficulty_level: form.value.difficulty_level,
         })
-        .eq('id', editingQuestion.value.id)
+        .eq("id", editingQuestion.value.id);
 
-      if (qError) throw qError
+      if (qError) throw qError;
 
       // Update answers
       for (const answer of form.value.answers) {
         const existingAnswer = editingQuestion.value.answers?.find(
-          (a) => a.label === answer.label
-        )
+          (a) => a.label === answer.label,
+        );
         const answerData = {
           content: answer.content.trim(),
           is_correct: answer.label === form.value.correctAnswer,
           display_order:
-            answer.label === 'A' ? 1 : answer.label === 'B' ? 2 : answer.label === 'C' ? 3 : 4,
-        }
+            answer.label === "A"
+              ? 1
+              : answer.label === "B"
+                ? 2
+                : answer.label === "C"
+                  ? 3
+                  : 4,
+        };
 
         if (existingAnswer) {
-          await supabase.from('answers').update(answerData).eq('id', existingAnswer.id)
+          await supabase
+            .from("answers")
+            .update(answerData)
+            .eq("id", existingAnswer.id);
         } else {
-          await supabase.from('answers').insert({
+          await supabase.from("answers").insert({
             question_id: editingQuestion.value.id,
             content: answer.content.trim(),
             label: answer.label,
             is_correct: answer.label === form.value.correctAnswer,
             display_order:
-              answer.label === 'A' ? 1 : answer.label === 'B' ? 2 : answer.label === 'C' ? 3 : 4,
-          })
+              answer.label === "A"
+                ? 1
+                : answer.label === "B"
+                  ? 2
+                  : answer.label === "C"
+                    ? 3
+                    : 4,
+          });
         }
       }
 
-      toast.add({ title: 'Pytanie zaktualizowane', color: 'green' })
+      toast.add({ title: "Pytanie zaktualizowane", color: "green" });
     } else {
       // Create new question
       const { data: questionData, error: qError } = await supabase
-        .from('questions')
+        .from("questions")
         .insert({
           content: form.value.content.trim(),
           explanation: form.value.explanation?.trim() || null,
           difficulty_level: form.value.difficulty_level,
           tags: [],
         })
-        .select('id')
-        .single()
+        .select("id")
+        .single();
 
-      if (qError) throw qError
-      if (!questionData) throw new Error('Failed to create question')
+      if (qError) throw qError;
+      if (!questionData) throw new Error("Failed to create question");
 
       // Create answers
       const answersToInsert = form.value.answers.map((answer, idx) => ({
@@ -584,69 +619,71 @@ async function handleSubmit() {
         label: answer.label,
         is_correct: answer.label === form.value.correctAnswer,
         display_order: idx + 1,
-      }))
+      }));
 
-      const { error: aError } = await supabase.from('answers').insert(answersToInsert)
-      if (aError) throw aError
+      const { error: aError } = await supabase
+        .from("answers")
+        .insert(answersToInsert);
+      if (aError) throw aError;
 
-      toast.add({ title: 'Pytanie dodane', color: 'green' })
+      toast.add({ title: "Pytanie dodane", color: "green" });
     }
 
-    await fetchQuestions()
-    closeModal()
+    await fetchQuestions();
+    closeModal();
   } catch (error) {
-    console.error('Failed to save question:', error)
+    console.error("Failed to save question:", error);
     toast.add({
-      title: 'Błąd',
-      description: 'Nie udało się zapisać pytania',
-      color: 'red',
-    })
+      title: "Błąd",
+      description: "Nie udało się zapisać pytania",
+      color: "red",
+    });
   } finally {
-    saving.value = false
+    saving.value = false;
   }
 }
 
 // Delete
 function confirmDelete(question: QuestionWithAnswers) {
-  questionToDelete.value = question
-  isDeleting.value = true
+  questionToDelete.value = question;
+  isDeleting.value = true;
 }
 
 async function handleDelete() {
-  if (!questionToDelete.value) return
+  if (!questionToDelete.value) return;
 
-  deleting.value = true
+  deleting.value = true;
   try {
     const { error } = await supabase
-      .from('questions')
+      .from("questions")
       .delete()
-      .eq('id', questionToDelete.value.id)
+      .eq("id", questionToDelete.value.id);
 
-    if (error) throw error
+    if (error) throw error;
 
-    toast.add({ title: 'Pytanie usunięte', color: 'green' })
-    await fetchQuestions()
-    isDeleting.value = false
-    questionToDelete.value = null
+    toast.add({ title: "Pytanie usunięte", color: "green" });
+    await fetchQuestions();
+    isDeleting.value = false;
+    questionToDelete.value = null;
   } catch (error) {
-    console.error('Failed to delete question:', error)
+    console.error("Failed to delete question:", error);
     toast.add({
-      title: 'Błąd',
-      description: 'Nie udało się usunąć pytania',
-      color: 'red',
-    })
+      title: "Błąd",
+      description: "Nie udało się usunąć pytania",
+      color: "red",
+    });
   } finally {
-    deleting.value = false
+    deleting.value = false;
   }
 }
 
 // Mount
 onMounted(() => {
-  fetchQuestions()
-})
+  fetchQuestions();
+});
 
 // Reset page on filter change
 watch([searchQuery, filterDifficulty], () => {
-  currentPage.value = 1
-})
+  currentPage.value = 1;
+});
 </script>

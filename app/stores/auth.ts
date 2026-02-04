@@ -47,8 +47,6 @@ export const useAuthStore = defineStore("auth", () => {
         .eq("id", user.value.sub)
         .single();
 
-      console.log("error", error);
-
       if (error) {
         // If profile doesn't exist, create one
         if (error.code === "PGRST116") {
