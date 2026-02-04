@@ -1,4 +1,4 @@
-# TylkoMatmaLabel
+# TylkoMatmaOnline
 
 A modern, scalable educational web platform built with **Nuxt 4** and **Supabase** for teaching mathematics.
 

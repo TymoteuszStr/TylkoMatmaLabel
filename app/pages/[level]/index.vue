@@ -164,8 +164,8 @@ onMounted(async () => {
 // SEO
 useHead(() => ({
   title: educationLevel.value
-    ? `${educationLevel.value.name} - TylkoMatmaLabel`
-    : "TylkoMatmaLabel",
+    ? `${educationLevel.value.name} - TylkoMatmaOnline`
+    : "TylkoMatmaOnline",
   meta: [
     {
       name: "description",

@@ -9,7 +9,7 @@
             name="i-heroicons-academic-cap"
             class="text-4xl text-primary-600"
           />
-          <h1 class="text-3xl font-bold">TylkoMatmaLabel</h1>
+          <h1 class="text-3xl font-bold">TylkoMatmaOnline</h1>
         </NuxtLink>
         <h2 class="mt-6 text-2xl font-bold text-gray-900 dark:text-white">
           Zaloguj się do konta

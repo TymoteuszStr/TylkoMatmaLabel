@@ -12,7 +12,7 @@
             O nas
           </h1>
           <p class="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
-            Poznaj historię i misję platformy TylkoMatmaLabel
+            Poznaj historię i misję platformy TylkoMatmaOnline
           </p>
         </div>
       </div>
@@ -36,7 +36,7 @@
                 Nasza misja
               </h2>
               <p class="mt-4 text-gray-600 dark:text-gray-400">
-                TylkoMatmaLabel to platforma edukacyjna stworzona z myślą o
+                TylkoMatmaOnline to platforma edukacyjna stworzona z myślą o
                 uczniach, którzy chcą opanować matematykę w przystępny i
                 efektywny sposób. Wierzymy, że każdy może polubić matematykę,
                 jeśli zostanie ona przedstawiona we właściwy sposób.
@@ -203,12 +203,12 @@
 <script setup lang="ts">
 // SEO
 useHead({
-  title: "O nas - TylkoMatmaLabel",
+  title: "O nas - TylkoMatmaOnline",
   meta: [
     {
       name: "description",
       content:
-        "Poznaj historię i misję platformy TylkoMatmaLabel - kompleksowej platformy do nauki matematyki online.",
+        "Poznaj historię i misję platformy TylkoMatmaOnline - kompleksowej platformy do nauki matematyki online.",
     },
   ],
 });

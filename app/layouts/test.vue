@@ -12,7 +12,7 @@
                 name="i-heroicons-academic-cap"
                 class="text-xl text-primary-600"
               />
-              <span class="text-lg font-bold">TylkoMatmaLabel</span>
+              <span class="text-lg font-bold">TylkoMatmaOnline</span>
             </div>
 
             <div class="flex items-center gap-2">

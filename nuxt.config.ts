@@ -10,7 +10,7 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: "TylkoMatmaLabel - Nauka matematyki online",
+      title: "TylkoMatmaOnline - Nauka matematyki online",
       htmlAttrs: {
         lang: "pl",
       },

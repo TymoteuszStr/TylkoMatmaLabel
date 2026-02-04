@@ -370,7 +370,7 @@ onMounted(async () => {
 
 // SEO
 useHead(() => ({
-  title: topic.value?.seo_title || `${topic.value?.name} - TylkoMatmaLabel`,
+  title: topic.value?.seo_title || `${topic.value?.name} - TylkoMatmaOnline`,
   meta: [
     {
       name: "description",

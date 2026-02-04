@@ -14,7 +14,7 @@
                   name="i-heroicons-academic-cap"
                   class="text-2xl text-primary-600"
                 />
-                <span class="text-xl font-bold">TylkoMatmaLabel</span>
+                <span class="text-xl font-bold">TylkoMatmaOnline</span>
               </NuxtLink>
               <UBadge color="primary" variant="subtle">Admin</UBadge>
             </div>

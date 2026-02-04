@@ -223,8 +223,8 @@ onMounted(async () => {
 // SEO
 useHead(() => ({
   title: category.value
-    ? `${category.value.name} - TylkoMatmaLabel`
-    : "TylkoMatmaLabel",
+    ? `${category.value.name} - TylkoMatmaOnline`
+    : "TylkoMatmaOnline",
   meta: [
     {
       name: "description",

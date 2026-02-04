@@ -43,10 +43,10 @@
                   Napisz do nas
                 </p>
                 <a
-                  href="mailto:kontakt@TylkoMatmaLabel.pl"
+                  href="mailto:kontakt@TylkoMatmaOnline.pl"
                   class="mt-3 block text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
                 >
-                  kontakt@TylkoMatmaLabel.pl
+                  kontakt@TylkoMatmaOnline.pl
                 </a>
               </div>
             </UCard>
@@ -250,7 +250,7 @@ const faqItems = [
   {
     label: "Czy korzystanie z platformy jest darmowe?",
     content:
-      "Tak! TylkoMatmaLabel oferuje bezpłatny dostęp do wszystkich materiałów edukacyjnych i testów. Wystarczy się zarejestrować.",
+      "Tak! TylkoMatmaOnline oferuje bezpłatny dostęp do wszystkich materiałów edukacyjnych i testów. Wystarczy się zarejestrować.",
     defaultOpen: true,
   },
   {
@@ -271,18 +271,18 @@ const faqItems = [
   {
     label: "Jak mogę zgłosić błąd lub problem?",
     content:
-      "Możesz skorzystać z formularza kontaktowego powyżej lub napisać bezpośrednio na adres kontakt@TylkoMatmaLabel.pl",
+      "Możesz skorzystać z formularza kontaktowego powyżej lub napisać bezpośrednio na adres kontakt@TylkoMatmaOnline.pl",
   },
 ];
 
 // SEO
 useHead({
-  title: "Kontakt - TylkoMatmaLabel",
+  title: "Kontakt - TylkoMatmaOnline",
   meta: [
     {
       name: "description",
       content:
-        "Skontaktuj się z zespołem TylkoMatmaLabel. Odpowiadamy na pytania i pomagamy w nauce matematyki.",
+        "Skontaktuj się z zespołem TylkoMatmaOnline. Odpowiadamy na pytania i pomagamy w nauce matematyki.",
     },
   ],
 });

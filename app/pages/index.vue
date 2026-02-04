@@ -215,7 +215,7 @@ onMounted(async () => {
 
 // SEO
 useHead({
-  title: "TylkoMatmaLabel - Nauka matematyki online",
+  title: "TylkoMatmaOnline - Nauka matematyki online",
   meta: [
     {
       name: "description",

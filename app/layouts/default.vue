@@ -13,7 +13,7 @@
                 name="i-heroicons-academic-cap"
                 class="text-2xl text-primary-600"
               />
-              <span class="text-xl font-bold">TylkoMatmaLabel</span>
+              <span class="text-xl font-bold">TylkoMatmaOnline</span>
             </NuxtLink>
 
             <!-- Navigation -->
@@ -95,7 +95,7 @@
             class="flex flex-col items-center justify-between gap-4 md:flex-row"
           >
             <div class="text-sm text-gray-600 dark:text-gray-400">
-              © {{ currentYear }} TylkoMatmaLabel. Wszystkie prawa zastrzeżone.
+              © {{ currentYear }} TylkoMatmaOnline. Wszystkie prawa zastrzeżone.
             </div>
             <div class="flex gap-6">
               <NuxtLink
