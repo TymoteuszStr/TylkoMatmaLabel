@@ -19,8 +19,6 @@ export const useAuthStore = defineStore("auth", () => {
 
   // Actions
   async function initialize() {
-    if (initialized.value) return;
-
     loading.value = true;
     try {
       if (user.value) {
@@ -36,6 +34,7 @@ export const useAuthStore = defineStore("auth", () => {
 
   async function fetchProfile() {
     if (!user.value || !user.value.sub) {
+      console.error("No user or user.sub, setting profile to null");
       profile.value = null;
       return;
     }
@@ -73,7 +72,10 @@ export const useAuthStore = defineStore("auth", () => {
         preferences: {},
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error creating profile:", error);
+        throw error;
+      }
     } catch (error) {
       console.error("Failed to create profile:", error);
       throw error;

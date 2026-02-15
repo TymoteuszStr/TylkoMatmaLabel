@@ -25,12 +25,15 @@ definePageMeta({
 const route = useRoute();
 const router = useRouter();
 const supabase = useSupabaseClient();
-const { initialize } = useAuth();
+const authStore = useAuthStore();
 
 onMounted(async () => {
   try {
-    // Get the session from the URL hash
-    const { error } = await supabase.auth.getSession();
+    // Give Supabase a moment to process the OAuth callback
+    // The @nuxtjs/supabase module automatically handles the session
+    await new Promise(resolve => setTimeout(resolve, 100));
+    // Check if we have a valid session
+    const { data: { session }, error } = await supabase.auth.getSession();
 
     if (error) {
       console.error("OAuth callback error:", error);
@@ -38,8 +41,14 @@ onMounted(async () => {
       return;
     }
 
+    if (!session) {
+      console.error("No session after OAuth callback");
+      router.push("/auth/login?error=no_session");
+      return;
+    }
+
     // Initialize auth state (fetch profile)
-    await initialize();
+    await authStore.initialize();
 
     // Redirect to the intended page or home
     const redirect = (route.query.redirect as string) || "/";
