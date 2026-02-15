@@ -17,17 +17,49 @@
             </NuxtLink>
 
             <!-- Navigation -->
-            <nav v-if="isAdmin" class="hidden items-center gap-6 md:flex">
+            <nav v-if="isAuthenticated" class="hidden items-center gap-6 md:flex">
               <NuxtLink
                 to="/"
-                class="text-sm font-medium text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-primary-400"
+                :class="[
+                  'text-sm font-medium transition-colors',
+                  isActiveRoute('/')
+                    ? 'text-green-600 dark:text-green-400'
+                    : 'text-gray-700 hover:text-green-600 dark:text-gray-300 dark:hover:text-green-400'
+                ]"
               >
                 Strona główna
               </NuxtLink>
               <NuxtLink
+                to="/materialy"
+                :class="[
+                  'text-sm font-medium transition-colors',
+                  isActiveRoute('/materialy')
+                    ? 'text-green-600 dark:text-green-400'
+                    : 'text-gray-700 hover:text-green-600 dark:text-gray-300 dark:hover:text-green-400'
+                ]"
+              >
+                Materiały
+              </NuxtLink>
+              <NuxtLink
+                to="/testy"
+                :class="[
+                  'text-sm font-medium transition-colors',
+                  isActiveRoute('/testy')
+                    ? 'text-green-600 dark:text-green-400'
+                    : 'text-gray-700 hover:text-green-600 dark:text-gray-300 dark:hover:text-green-400'
+                ]"
+              >
+                Testy
+              </NuxtLink>
+              <NuxtLink
                 v-if="isAdmin"
                 to="/admin"
-                class="text-sm font-medium text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-primary-400"
+                :class="[
+                  'text-sm font-medium transition-colors',
+                  isActiveRoute('/admin')
+                    ? 'text-green-600 dark:text-green-400'
+                    : 'text-gray-700 hover:text-green-600 dark:text-gray-300 dark:hover:text-green-400'
+                ]"
               >
                 Panel Admin
               </NuxtLink>
@@ -121,6 +153,7 @@
 <script setup lang="ts">
 const { isAuthenticated, isAdmin, profile, signOut } = useAuth();
 const colorMode = useColorMode();
+const route = useRoute();
 
 const isDark = computed({
   get: () => colorMode.value === "dark",
@@ -133,6 +166,14 @@ const currentYear = new Date().getFullYear();
 
 const toggleDarkMode = () => {
   isDark.value = !isDark.value;
+};
+
+// Check if route is active
+const isActiveRoute = (path: string) => {
+  if (path === '/') {
+    return route.path === '/';
+  }
+  return route.path.startsWith(path);
 };
 
 const userMenuItems = computed(() => [
