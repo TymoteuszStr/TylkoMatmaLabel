@@ -142,6 +142,13 @@
             Zarejestruj się
           </UButton>
         </form>
+
+        <AuthOrDivider />
+
+        <AuthGoogleLoginButton
+          :loading="googleLoading"
+          @click="handleGoogleLogin"
+        />
       </UCard>
 
       <div class="mt-6 text-center">
@@ -162,7 +169,7 @@ definePageMeta({
 });
 
 const router = useRouter();
-const { signUp } = useAuth();
+const { signUp, signInWithGoogle } = useAuth();
 
 const form = reactive({
   displayName: "",
@@ -172,6 +179,7 @@ const form = reactive({
 });
 
 const loading = ref(false);
+const googleLoading = ref(false);
 const errorMessage = ref("");
 const successMessage = ref("");
 const showPassword = ref(false);
@@ -222,5 +230,20 @@ async function handleRegister() {
   } else {
     errorMessage.value = result.error || "Błąd rejestracji";
   }
+}
+
+async function handleGoogleLogin() {
+  googleLoading.value = true;
+  errorMessage.value = "";
+  successMessage.value = "";
+
+  const result = await signInWithGoogle();
+
+  if (!result.success) {
+    googleLoading.value = false;
+    errorMessage.value = result.error || "Błąd rejestracji przez Google";
+  }
+  // Note: If successful, user will be redirected to Google OAuth page
+  // After auth, they'll be redirected back to /auth/callback
 }
 </script>

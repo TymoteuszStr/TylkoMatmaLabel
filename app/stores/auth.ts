@@ -135,6 +135,29 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
+  async function signInWithGoogle() {
+    loading.value = true;
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+
+      if (error) throw error;
+
+      return { success: true };
+    } catch (error: any) {
+      console.error("Google sign in failed:", error);
+      loading.value = false;
+      return {
+        success: false,
+        error: error.message || "Błąd logowania przez Google",
+      };
+    }
+  }
+
   async function signOut() {
     loading.value = true;
     try {
@@ -205,6 +228,7 @@ export const useAuthStore = defineStore("auth", () => {
     initialize,
     fetchProfile,
     signIn,
+    signInWithGoogle,
     signUp,
     signOut,
     updateProfile,

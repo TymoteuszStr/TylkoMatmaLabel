@@ -11,6 +11,7 @@ export const useAuth = () => {
     userRole: computed(() => authStore.userRole),
 
     signIn: authStore.signIn,
+    signInWithGoogle: authStore.signInWithGoogle,
     signUp: authStore.signUp,
     signOut: authStore.signOut,
     updateProfile: authStore.updateProfile,

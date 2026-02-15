@@ -88,6 +88,13 @@
             Zaloguj się
           </UButton>
         </form>
+
+        <AuthOrDivider />
+
+        <AuthGoogleLoginButton
+          :loading="googleLoading"
+          @click="handleGoogleLogin"
+        />
       </UCard>
 
       <div class="mt-6 text-center">
@@ -109,7 +116,7 @@ definePageMeta({
 
 const route = useRoute();
 const router = useRouter();
-const { signIn } = useAuth();
+const { signIn, signInWithGoogle } = useAuth();
 
 const form = reactive({
   email: "",
@@ -117,6 +124,7 @@ const form = reactive({
 });
 
 const loading = ref(false);
+const googleLoading = ref(false);
 const errorMessage = ref("");
 const showPassword = ref(false);
 
@@ -134,5 +142,19 @@ async function handleLogin() {
   } else {
     errorMessage.value = result.error || "Błąd logowania";
   }
+}
+
+async function handleGoogleLogin() {
+  googleLoading.value = true;
+  errorMessage.value = "";
+
+  const result = await signInWithGoogle();
+
+  if (!result.success) {
+    googleLoading.value = false;
+    errorMessage.value = result.error || "Błąd logowania przez Google";
+  }
+  // Note: If successful, user will be redirected to Google OAuth page
+  // After auth, they'll be redirected back to /auth/callback
 }
 </script>
