@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div class="flex min-h-screen flex-col bg-gray-50 dark:bg-gray-950">
       <!-- Header -->
       <header
         class="sticky top-0 z-50 border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900"
@@ -114,7 +114,7 @@
       </header>
 
       <!-- Main Content -->
-      <main>
+      <main class="flex-1">
         <slot />
       </main>
 
